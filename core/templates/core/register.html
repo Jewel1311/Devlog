@@ -1,0 +1,91 @@
+{% extends "core/base.html" %}
+{% block body%}
+<section>
+    <div class="fw-bold fs-3 m-3">DEV<span class="bg-primary text-white p-1 m-1 rounded">LOG</span></div>
+    <div class="container py-5 h-100">
+      <div class="row justify-content-center align-items-center h-100">
+        <div class="col-12 col-lg-9 col-xl-7">
+          <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+            <div class="card-body p-4 p-md-5">
+              <h3 class="mb-1 pb-2 pb-md-0 mb-md-5">Create Account</h3>
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                  {% for field in form %}
+                    {% for error in field.errors %}
+                      <div class="alert alert-danger p-2 m-1"> {{ error }} </div>
+                    {% endfor %}
+                  {% endfor %}
+                {% endif %}
+
+                {% if form.non_field_errors %}
+                  <div class="alert alert-danger p-2 m-1"> {{ error }} </div>
+                {% endif %}
+
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+  
+                    <div class="form-outline">
+                      {{ form.first_name }}
+                      <label class="form-label" for="firstName">First Name<span class="text-danger">*</span></label>
+                    </div>
+  
+                  </div>
+                  <div class="col-md-6 mb-4">
+  
+                    <div class="form-outline">
+                      {{ form.last_name }}
+                      <label class="form-label" for="lastName">Last Name<span class="text-danger">*</span></label>
+                    </div>
+  
+                  </div>
+                </div>
+  
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <div class="form-outline">
+                        {{ form.email }}
+                        <label class="form-label" for="lastName">Email<span class="text-danger">*</span></label>
+                      </div>
+                  </div>
+                  <div class="col-md-6 mb-4">
+                    <div class="form-outline">
+                        {{ form.username }}
+                        <label class="form-label" for="lastName">Username<span class="text-danger">*</span>
+                        <span class="" id="uavail"></span></label>
+                      </div>
+  
+                  </div>
+                </div>
+  
+                <div class="row">
+                  <div class="col-md-6 mb-4 pb-2">
+  
+                    <div class="form-outline">
+                        {{ form.password1 }}
+                      <label class="form-label" for="emailAddress">Password<span class="text-danger">*</span></label>
+                    </div>
+  
+                  </div>
+                  <div class="col-md-6 mb-4 pb-2">
+  
+                    <div class="form-outline">
+                      {{ form.password2 }}
+                      <label class="form-label" for="phoneNumber">Confirm Password<span class="text-danger">*</span></label>
+                    </div>
+  
+                  </div>
+                </div>
+                <div class="mt-2 pt-2">
+                  <input class="btn btn-primary btn-lg" type="submit" value="Create" />
+                </div>
+  
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock body%}
