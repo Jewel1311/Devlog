@@ -13,12 +13,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import imp
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include,re_path
 from core import views as core_views
+from django.contrib.auth.views import LogoutView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('core.urls')),
     path('register/',core_views.register, name='register'),
+    path('login/',core_views.login_view ,name='login_view'),
+    path('logout/', LogoutView.as_view() ,name='logout'),
+    re_path('ckeditor/', include('ckeditor_uploader.urls')),
 ]

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'core.apps.CoreConfig',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -120,6 +121,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+CKEDITOR_CONFIGS = {
+    'default': { 
+        'width': 'full', 
+    },
+}
+
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'
+
+CKEDITOR_UPLOAD_PATH = "posts/"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -129,6 +140,9 @@ STATIC_URL = 'static/'
 STATICFFILES_DIR=[
     os.path.join(BASE_DIR,'static')
 ]
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login_view'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

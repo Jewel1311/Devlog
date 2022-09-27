@@ -1,0 +1,19 @@
+{% extends "core/home.html" %}
+
+{% block contents %}
+<div class="row mx-4">
+    <div class="col-lg-8 col-xs-12 my-3 bg-white p-4 shadow rounded">
+        <form enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ form.media }}
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary fw-bold">Create Post</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-2 d-none d-lg-block">
+        
+    </div>
+</div>
+{% endblock contents %}

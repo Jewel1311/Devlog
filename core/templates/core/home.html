@@ -1,25 +1,29 @@
 {% extends "core/base.html" %}
 {% load static%}
 {% block body %}
+
+
 <!--Main Navigation-->
 <header>
   <!-- Sidebar -->
+  {% with url_name=request.resolver_match.url_name %}
   <nav
        id="sidebarMenu"
        class="collapse d-lg-block sidebar collapse bg-white mt-2"
        >
     <div class="position-sticky">
+      {% if user.is_authenticated %}
       <div class="list-group list-group-flush mx-3 mt-4">
         <a
-           href="#"
-           class="list-group-item list-group-item-action py-4 ripple"
+           href="{% url 'write_post' %}"
+           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'write_post' %} text-primary {% endif %}"
            aria-current="true"
            >
-           <i class="fa-sharp fa-solid fa-pen fa-fw me-3 "></i><span class="fw-bold">Write</span>
+           <i class="fa-sharp fa-solid fa-pen fa-fw me-3"></i><span class="fw-bold">Write</span>
         </a>
         <a
            href="#"
-           class="list-group-item list-group-item-action py-4 ripple text-primary"
+           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'home' %} text-primary {% endif %}"
            >
            <i class="fa-solid fa-bars-staggered fa-fw me-3"></i><span class ="fw-bold">My Feed</span>
         </a>
@@ -41,6 +45,15 @@
         >
         <i class="fa-solid fa-bookmark fa-fw me-3"></i><span class ="fw-bold">Bookmarked</span>
         </a>
+
+        {% else %}
+          <div class="mt-5 mx-1 rounded text-center fs-5 p-2 py-5 border">
+            <p>Join the community and stay upto date</p>
+            <a href="{% url 'register' %}" class="text-decoration-none bg-primary text-white
+            p-2 fw-bold rounded">Get Started</a>
+          </div>
+        {% endif %}
+      {% endwith %}
 
       </div>
     </div>
@@ -87,8 +100,9 @@
 
 
       <!-- Right links -->
+      
       <ul class="navbar-nav ms-auto d-flex flex-row">
-        
+        {% if user.is_authenticated %}
         <!-- Avatar -->
         <li class="nav-item dropdown">
           <a
@@ -100,10 +114,9 @@
              aria-expanded="false"
              >
             <img
-                 src="https://mdbootstrap.com/img/Photos/Avatars/img (31).jpg"
+                 {% if user.profile.image %}src=""{% else %}src="{% static 'images/user.png' %}" {% endif %}
                  class="rounded-circle"
                  height="22"
-                 alt=""
                  loading="lazy"
                  />
           </a>
@@ -113,9 +126,16 @@
               >
             <li><a class="dropdown-item" href="#">My profile</a></li>
             <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Logout</a></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
           </ul>
         </li>
+        {% else %}
+          <a href="{% url 'login_view' %}" class="text-decoration-none m-2 fw-bold p-2">Login</a>
+          <a href="{% url 'register' %}" 
+            class="text-decoration-none m-2 text-primary fw-bold border border-primary p-2 rounded">
+            Create Account
+          </a>
+        {% endif %}
       </ul>
     </div>
     <!-- Container wrapper -->
@@ -126,9 +146,10 @@
 
 <!--Main layout-->
 <main style="margin-top: 58px">
-  <div class="container pt-4">
+  <div class="container-fluid pt-4">
+      {% block contents %} {% endblock contents %}
 
-  </div>
+    </div>
 </main>
 <!--Main layout-->
 {% endblock body %}

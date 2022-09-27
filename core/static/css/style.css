@@ -41,3 +41,7 @@ body {
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   }
+
+  .django-ckeditor-widget{
+    width: 100%;
+  }
