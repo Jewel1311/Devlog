@@ -1,14 +1,21 @@
-from datetime import datetime
+from datetime import date, datetime
 from django.shortcuts import render, redirect
 from core.forms import PostForm, UserRegistrationForm, LoginForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
+from core.utils import get_read_time, save_tags
 from . import decorators
+from django.contrib.auth.decorators import login_required
+from . models import Posts, Profile, Tags
 
 
 
 def home(request):
-    return render(request, 'core/home.html')
+    posts = Posts.get_recent_posts()
+    context = {
+        'posts':posts,
+    }
+    return render(request, 'core/posts.html',context)
 
 @decorators.check_loggedin
 def register(request):
@@ -42,10 +49,39 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'core/login.html',{'form':form})
     
-
+@login_required
 def write_post(request):
     if request.method == "POST":
-        pass
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            body = form.cleaned_data['body']
+            tags = form.cleaned_data['tags']
+
+            post_tags = save_tags(tags)
+            post = form.save(False)
+
+            post.date = datetime.now()
+            post.user = request.user
+            post.readtime = get_read_time(body)
+            post.save()
+            post.tags.add(*post_tags) #add tag id's in post
+            post.save()
+
+            #saving no of posts in user profile
+            profile = Profile.objects.get(user=request.user)
+            profile.post_count +=1 
+            profile.save()
+
+            return redirect('home')
+    
+        return render(request, 'core/write.html',{'form':form})   
+
     else:
         form = PostForm()
-        return render(request, 'core/write.html',{'form':form})   
+        tags = Tags.objects.all().order_by('-count')[:10]
+        context = {
+            'form':form, 
+            'tags':tags
+            }
+        return render(request, 'core/write.html',context)   
+    

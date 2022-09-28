@@ -1,7 +1,7 @@
-from unicodedata import name
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
-from .models import Profile
+from core.utils import extract_tags
+from .models import Profile, Tags, Posts
 from django.contrib.auth.models import Group
 from django.dispatch import receiver
 

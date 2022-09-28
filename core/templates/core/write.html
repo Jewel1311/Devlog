@@ -2,8 +2,15 @@
 
 {% block contents %}
 <div class="row mx-4">
-    <div class="col-lg-8 col-xs-12 my-3 bg-white p-4 shadow rounded">
-        <form enctype="multipart/form-data">
+    <div class="col-lg-8 col-xs-12 bg-white p-4 shadow rounded">
+        {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger p-2 m-1 text-center"> {{ error }} </div>
+            {% endfor %}
+        {% endfor %}
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             {{ form.media }}
@@ -12,8 +19,20 @@
             </div>
         </form>
     </div>
-    <div class="col-lg-2 d-none d-lg-block">
-        
-    </div>
+    <div class="col-lg-3 d-none d-md-none d-lg-block">
+        <div class="bg-white shadow p-3 rounded mx-3" style="min-width: 350px;">
+            <div class="fw-bold fs-5 border-bottom mb-4 pb-1"><i class="text-warning fa-sharp fa-solid fa-fire"></i><span> Trending Tags</span></div>
+            {% for tag in tags %}
+                <div class="row py-3"> 
+
+                   <div class="col-lg-8"><a href="#" class="text-decoration-none text-black"><span class="fw-bold"> {{ tag.name|truncatechars:27 }}</span></a>
+                    </div>
+
+                    <div class="col-lg-4"><span class="fw-bold p-1 rounded bg-primary bg-opacity-25 text-primary">{{ tag.count|stringformat:"02d" }} </span><span class="fw-bold m-1"> Posts</span>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
 </div>
 {% endblock contents %}

@@ -131,6 +131,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
 
 CKEDITOR_UPLOAD_PATH = "posts/"
+CKEDITOR_RESTRICT_BY_USER = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

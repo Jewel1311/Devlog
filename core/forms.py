@@ -1,10 +1,12 @@
-from distutils.command.upload import upload
+from django.http import HttpResponse
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 from core.models import Posts
+from core.validators import tag_validation
+from .utils import extract_tags
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -32,16 +34,17 @@ class LoginForm(forms.Form):
 
 class PostForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={
-        'class':'form-control'
+        'class':'form-control fw-bold'
     }),required=True)
     body = forms.CharField(widget = CKEditorUploadingWidget(attrs={'class':'form-control'}),required=True)
-    tags = forms.CharField(widget=forms.TextInput(attrs={
-        'class':'form-control'
+    tags = forms.CharField(validators=[tag_validation],widget=forms.TextInput(attrs={
+        'class':'form-control','placeholder':'maximum 3 tags  (eg:#devlog)'
     }),required=True)
-    cover_image = forms.ImageField(required=False)
 
     class Meta:
         model = Posts
-        fields = ['title','body','tags','cover_image']
+        fields = ['title','body','tags','coverimage']
+
+
 
     
