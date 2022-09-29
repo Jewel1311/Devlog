@@ -14,7 +14,7 @@ class Profile(models.Model):
     work = models.CharField(max_length=200, blank=True)
     bio = models.TextField(blank=True)
     skills = models.TextField(blank=True)
-    location = models.CharField(max_length=200),
+    location = models.CharField(max_length=200, default="", null=True)
     connections = models.ManyToManyField(User, related_name='connections')
     followers_count = models.BigIntegerField(default=0)
     following_count = models.BigIntegerField(default=0)
@@ -75,6 +75,14 @@ class Posts(models.Model):
     @classmethod
     def get_recent_posts(self):
         return self.objects.filter().order_by('-id')
+
+    @classmethod
+    def get_top_posts(self):
+        return self.objects.filter().order_by('-like_count')
+
+    @classmethod    
+    def get_tag_post(self, tag):
+        return self.objects.filter(tags = tag).order_by('-id')
         
     def __str__(self):
         return str(self.title)

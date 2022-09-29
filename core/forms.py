@@ -1,12 +1,11 @@
-from django.http import HttpResponse
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from requests import request
 
-from core.models import Posts
+from core.models import Posts, Profile
 from core.validators import tag_validation
-from .utils import extract_tags
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -45,6 +44,30 @@ class PostForm(forms.ModelForm):
         model = Posts
         fields = ['title','body','tags','coverimage']
 
-
-
+class ProfileForm(forms.ModelForm):
+    image = forms.ImageField(label="",widget=forms.FileInput(attrs={'class':"form-control my-1",'id':"photoid"}),required=False)
+    education = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=False)
+    work = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=False)
+    location = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=False)
+    bio = forms.CharField(widget=forms.Textarea(attrs={
+        'class':'form-control fw-bold',
+        'rows':6
+        }),required=False)
+    skills = forms.CharField(widget=forms.Textarea(attrs={
+        'class':'form-control fw-bold',
+        'rows':6
+        }),required=False)
     
+    class Meta:
+        model = Profile
+        fields = ['image','education','work','bio','skills','location']
+
+
+class UserForm(forms.ModelForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=True)
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=True)
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=True)
+
+    class Meta:
+        model = User
+        fields = ['username','first_name','last_name']

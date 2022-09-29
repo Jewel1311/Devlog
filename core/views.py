@@ -1,6 +1,8 @@
-from datetime import date, datetime
+from datetime import datetime
+from django.forms import ValidationError
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
-from core.forms import PostForm, UserRegistrationForm, LoginForm
+from core.forms import PostForm, ProfileForm, UserForm, UserRegistrationForm, LoginForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from core.utils import get_read_time, save_tags
@@ -12,10 +14,25 @@ from . models import Posts, Profile, Tags
 
 def home(request):
     posts = Posts.get_recent_posts()
+    popular = Posts.get_top_posts()[:5]
     context = {
         'posts':posts,
+        'popular':popular
     }
     return render(request, 'core/posts.html',context)
+
+
+def top_posts(request):
+    posts = Posts.get_top_posts()
+    popular_tag = Tags.objects.order_by('-count')[0]  #get the tag with high count
+    popular = Posts.get_tag_post(popular_tag.id)[:5]
+    context = {
+        'posts':posts,
+        'popular':popular,
+        'tag':popular_tag
+    }
+    return render(request, 'core/posts.html',context)
+
 
 @decorators.check_loggedin
 def register(request):
@@ -84,4 +101,31 @@ def write_post(request):
             'tags':tags
             }
         return render(request, 'core/write.html',context)   
-    
+
+@login_required  
+def blogger_profile(request):
+        return render(request, 'core/profile.html')
+
+@login_required
+def edit_profile(request):
+    if request.method == "POST":
+        uform = UserForm(request.POST, instance=request.user)
+        pform = ProfileForm(request.POST,request.FILES,instance=request.user.profile)
+        if uform.is_valid() and pform.is_valid():
+            pform.save()
+            uform.save()
+            return redirect('blogger_profile')
+        else:
+            context = {
+            'pform':pform,
+            'uform':uform
+            }
+            return render(request, 'core/editprofile.html',context)
+    else:
+        pform = ProfileForm(instance=request.user.profile)
+        uform = UserForm(instance=request.user)
+        context = {
+            'pform':pform,
+            'uform':uform
+        }
+        return render(request, 'core/editprofile.html',context)

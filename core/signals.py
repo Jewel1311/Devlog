@@ -15,7 +15,7 @@ def blogger_profile(sender, instance, created, **kwargs):
         except:
             group, created = Group.objects.get_or_create(name='bloggers')
 
-        #exclude admin from being in grop and having profile
+        #exclude admin from being in group and having profile
         if instance.is_superuser:
             return
 

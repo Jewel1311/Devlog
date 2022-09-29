@@ -3,11 +3,38 @@
 {% block contents %}
 <div class="row mx-4">
     <div class="col-lg-8">
+        <!-- write article -->
+        {% if user.is_authenticated %}
+        <div class="bg-white rounded shadow p-2 mb-2 rounded">
+                    <a href="#" class="text-decoration-none text-black"><img src="
+                            {% if user.profile.image %}
+                                {{ user.profile.image.url }}
+                            {% else %}
+                                {% static 'images/user.png' %} 
+                            {% endif %}"
+                            class="rounded-circle"
+                            height="30"
+                            loading="lazy" 
+                            />
+                            <span class="fw-bold mx-1">{{user.username}}</span>
+                    </a>
+                    <a href="{% url 'write_post' %}" class="text-decoration-none text-black">
+                        <div class="p-2 mt-1 border w-100 rounded" style="background-color: #e9ecef;">
+                            <span class="mx-1 fw-bold" >
+                            <i class="fa-sharp fa-solid fa-pen fa-fw text-primary"></i> Write an article...
+                            </span>
+                        </div>
+                    </a>
+        </div>
+        {% endif %}
+
         <!-- recent top tab -->
         <div class="bg-white rounded shadow">
             <div class="p-2">
-                <a href="#" class="text-decoration-none text-secondary p-2   text-black fw-bold">Recent</a>
-                <a href="#" class="text-decoration-none text-secondary p-2">Top</a>
+                <a href="{% url 'home' %}" class="text-decoration-none p-2 
+                {% if url_name == 'top_posts'%} text-secondary {% else %}text-black fw-bold{% endif %}">Recent</a>
+                <a href="{% url 'top_posts' %}" class="text-decoration-none 
+                {% if url_name == 'top_posts'  %} text-black fw-bold{% else %}text-secondary{% endif %} p-2">Top</a>
             </div>
         </div>
 
@@ -23,19 +50,19 @@
                                 {% static 'images/user.png' %} 
                             {% endif %}"
                         class="rounded-circle"
-                        height="22"
+                        height="30"
                         loading="lazy"
                         />
-                        <span class="fw-bold text-black px-1">{{ post.user.username }}</span>
+                        <span class="fw-bold text-black px-1 textover">{{ post.user.username }}</span>
                     </a>
                     <div class="my-1">{{ post.date|date }}</div>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="card-title fw-bold fs-4 {% if post.coverimage %} col-lg-9 {% endif %}"><a href="#" class="text-decoration-none text-black">{{ post.title }}</a>
+                        <div class="card-title fw-bold fs-4  {% if post.coverimage %} col-lg-9 {% endif %}"><a href="#" class="text-decoration-none text-black linkover">{{ post.title }}</a>
                         </div>
                         {% if post.coverimage %}
-                          <div class="col-lg-3"> <img src="{{ post.coverimage.url }}" class="img-fluid" height="2"  alt=""></div>
+                          <a href="{{ post.coverimage.url }}" class="col-lg-3"> <img src="{{ post.coverimage.url }}" class="img-fluid"   alt=""></a>
                         {% endif %}
                     </div>
                 <p class="card-text text-decoration-none py-2">
@@ -49,11 +76,11 @@
                         <span>
                             <span>
                                 <span class="fs-4"><i class="fa-regular fa-heart"></i></span>
-                                <span class="px-1">{{ post.like_count|stringformat:"02d"}}</span>
+                                <span>{{ post.like_count|stringformat:"02d"}}</span>
                             </span>
                             <span class="px-3">
                                 <span class="fs-4"><i class="fa-regular fa-comment"></i></span>
-                                <span class="px-1">{{ post.like_count|stringformat:"02d"}}</span>
+                                <span>{{ post.comment_count|stringformat:"02d"}}</span>
                             </span>     
                         </span>
 
@@ -67,5 +94,46 @@
         {% endfor %}
 
     </div>
+
+    <div class="col-lg-4 d-none d-lg-block">
+        <div class="bg-white rounded p-2 shadow">
+            {% if url_name == 'top_posts'%}
+            <div class="py-2 fw-bold fs-5 border-bottom"><i class="text-warning fa-sharp fa-solid fa-fire"></i><span class="mx-1"><a href="#" class="text-decoration-none text-info linkover">{{tag.name}}</a></span>
+            </div>
+            {% else %}
+            <div class="py-2 fw-bold fs-5 border-bottom"><span></span><i class="fa-solid fa-star text-warning px-1"></i><span>Most Popular</span></div>
+            {% endif %}
+            {% for popular in popular %}
+                <div class="py-3 border-bottom">
+                    <div>
+                        <a href="#" class="text-decoration-none">
+                            <img src="
+                                    {% if popular.user.profile.image %}
+                                        {{ popular.user.profile.image.url }}
+                                    {% else %}
+                                        {% static 'images/user.png' %} 
+                                    {% endif %}"
+                                class="rounded-circle"
+                                height="30"
+                                loading="lazy"
+                            />
+                            <span class="fw-bold text-black px-1 textover">{{ popular.user.username }}</span>
+                        </a>
+                        <div class="my-1">{{ popular.date|date }}</div>
+                    </div>
+                    <div><a href="#" class="text-decoration-none text-black fw-bold linkover">{{ popular.title }}</a></div>
+                    <div>
+                        <span class="fs-4"><i class="fa-regular fa-heart"></i></span>
+                        <span>{{ popular.like_count|stringformat:"02d"}}</span>
+                        <span class="px-2">
+                            <span class="fs-4"><i class="fa-regular fa-comment"></i></span>
+                            <span>{{ popular.comment_count|stringformat:"02d"}}</span>
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
 </div>
 {% endblock contents%}
