@@ -5,7 +5,7 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from requests import request
 
 from core.models import Posts, Profile
-from core.validators import tag_validation
+from core.validators import tag_validation,validate_image
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -45,7 +45,7 @@ class PostForm(forms.ModelForm):
         fields = ['title','body','tags','coverimage']
 
 class ProfileForm(forms.ModelForm):
-    image = forms.ImageField(label="",widget=forms.FileInput(attrs={'class':"form-control my-1",'id':"photoid"}),required=False)
+    image = forms.ImageField(label="",validators=[validate_image],widget=forms.FileInput(attrs={'class':"form-control my-1",'id':"photoid"}),required=False)
     education = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=False)
     work = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=False)
     location = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=False)

@@ -1,38 +1,42 @@
 {% extends "core/home.html" %}
+{% load static %}
 {% block contents %}
 
 <section class="h-100">
-    <div class="container-fluid py-5">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col col-lg-10 col-xl-7">
-          <div class="card">
-            <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <div class="col col-lg-12 col-xl-7">
+          <div class="card shadow">
+            <div class="rounded-top text-white d-flex flex-row" style="background-color: #0275d8; height:200px;">
               <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-                  alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
+
+                <img src="{% if profile.image %}{{ profile.image.url}}{% else %}{% static 'images/user.png' %}{% endif %}"
+                  class="img-fluid img-thumbnail mt-4 mb-2"
                   style="width: 150px; z-index: 1">
-                <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary" data-mdb-ripple-color="primary"
-                  style="z-index: 1;">
-                  Edit profile
-              </a>
+                
+                {% if user == blogger %}
+                  <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary" data-mdb-ripple-color="primary"
+                    style="z-index: 1;">
+                    Edit profile
+                  </a>
+                {% endif %}
               </div>
-              <div class="ms-3" style="margin-top: 130px;">
-                <h5>Andy Horwitz</h5>
-                <p>New York</p>
+              <div class="ms-3" style="margin-top: 120px;">
+                <p class="fw-bold fs-4">{{ blogger.username }}</p>
+                <p>{{ blogger.first_name|title }} {{ blogger.last_name|title }}</p>
               </div>
             </div>
             <div class="p-4 text-black" style="background-color: #f8f9fa;">
               <div class="d-flex justify-content-end text-center py-1">
                 <div>
-                  <p class="mb-1 h5">253</p>
-                  <p class="small text-muted mb-0">Photos</p>
+                  <p class="mb-1 h5">{{ profile.post_count }}</p>
+                  <p class="small text-muted mb-0">Posts</p>
                 </div>
                 <div class="px-3">
-                  <p class="mb-1 h5">1026</p>
+                  <p class="mb-1 h5">{{ profile.followers_count }}</p>
                   <p class="small text-muted mb-0">Followers</p>
                 </div>
                 <div>
-                  <p class="mb-1 h5">478</p>
+                  <p class="mb-1 h5">{{ profile.following_count }}</p>
                   <p class="small text-muted mb-0">Following</p>
                 </div>
               </div>
@@ -41,41 +45,42 @@
               <div class="mb-5">
                 <p class="lead fw-normal mb-1">About</p>
                 <div class="p-4" style="background-color: #f8f9fa;">
-                  <p class="font-italic mb-1">Web Developer</p>
-                  <p class="font-italic mb-1">Lives in New York</p>
-                  <p class="font-italic mb-0">Photographer</p>
+                  <p class="font-italic mb-1 fw-bold">{{ profile.bio|linebreaksbr }}</p>
                 </div>
               </div>
-              <div class="d-flex justify-content-between align-items-center mb-4">
-                <p class="lead fw-normal mb-0">Recent photos</p>
-                <p class="mb-0"><a href="#!" class="text-muted">Show all</a></p>
-              </div>
-              <div class="row g-2">
-                <div class="col mb-2">
-                  <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp"
-                    alt="image 1" class="w-100 rounded-3">
-                </div>
-                <div class="col mb-2">
-                  <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp"
-                    alt="image 1" class="w-100 rounded-3">
+              <div class="mb-5">
+                <p class="lead fw-normal mb-1">Skills</p>
+                <div class="p-4" style="background-color: #f8f9fa;">
+                  <p class="font-italic mb-1 fw-bold">{{ profile.skills|linebreaksbr }}</p>
                 </div>
               </div>
               <div class="row g-2">
-                <div class="col">
-                  <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(108).webp"
-                    alt="image 1" class="w-100 rounded-3">
+                <div class="col mb-2">
+                  <span><i class="fa-solid fa-suitcase px-2 text-secondary"></i> {{ profile.work }}</span>
                 </div>
-                <div class="col">
-                  <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(114).webp"
-                    alt="image 1" class="w-100 rounded-3">
+                <div class="col mb-2">
+                  <span><i class="fa-sharp fa-solid fa-graduation-cap px-2 text-secondary"></i> {{ profile.education }}</span>
                 </div>
               </div>
+              <div class="row g-2 mt-2">
+                <div class="col">
+                  <span><i class="fa-sharp fa-solid fa-location-dot px-2 text-secondary"></i> {{ profile.location }}</span>
+                </div>
+                <div class="col">
+                  <span><i class="fa-sharp fa-solid fa-cake-candles px-2 text-secondary"></i> Joined on {{ blogger.date_joined|date }}</span>
+                </div>
+              </div>
+              <div class="fs-5 mt-5 mb-2">Recent Posts</div>
+               
+                {% for post in posts %}
+                <div class="row border-top py-2">
+                  <div class="py-1"> <i class="fa-regular fa-calendar-days text-secondary"></i><span class="px-2">{{ post.date|date}}</span></div>
+                  <a href="#" class="text-decoration-none text-black linkover"><div class="mx-4 my-3">{{post.title}}</div></a>
+                </div>
+                {% endfor %}
             </div>
           </div>
         </div>
-      </div>
     </div>
   </section>
-
-
 {% endblock contents %}

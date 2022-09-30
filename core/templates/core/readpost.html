@@ -1,0 +1,91 @@
+{% extends 'core/home.html' %}
+{% load static %}
+{% block contents %}
+<div class="row">
+    <div class="col-lg-9 ">
+        <div class="bg-white shadow rounded mx-4 p-2">
+            <div class="d-flex justify-content-end">
+                <a href="" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Report Post">
+                    <i class="fa-solid fa-circle-exclamation fs-5 text-danger"></i>
+                </a>
+            </div>
+            <div class="card-header">
+                <a href="{% url 'view_profile' post.user.pk %}" class="text-decoration-none">
+                    <img src="
+                        {% if post.user.profile.image %}
+                            {{ post.user.profile.image.url }}
+                        {% else %}
+                            {% static 'images/user.png' %} 
+                        {% endif %}"
+                    class="rounded-circle"
+                    height="30"
+                    loading="lazy"
+                    />
+                    <span class="fw-bold text-black px-1 textover">{{ post.user.username }}</span>
+                </a>
+                <div class="my-2">Published on {{ post.date|date }}</div>
+            </div>
+            <div class="row">
+                <div class="card-title fw-bold fs-4  {% if post.coverimage %} col-lg-9 {% endif %}"><a href="{{ post.get_absolute_url }}" class="text-decoration-none text-black linkover">{{ post.title }}</a>
+                </div>
+                {% if post.coverimage %}
+                  <a href="{{ post.coverimage.url }}" class="col-lg-3"> <img src="{{ post.coverimage.url }}" class="img-fluid"   alt=""></a>
+                {% endif %}
+            </div>
+            <span class="mt-2">
+                <a href="{% url 'post_likes' post.pk %}" class="text-black text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Like Post">
+                    <span><i class="{% if is_liked %} fa-solid fa-heart text-danger {% else %}fa-regular fa-heart{% endif %} likeover p-1 rounded-circle fs-3
+                        "></i></span> 
+                    </a>
+                <span id="likecount">{{ post.like_count}}</span>
+            </span>
+            <span class="mt-2 mx-3">
+                <a href="#" class="text-decoration-none text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Comments">
+                    <span><i class="fa-regular fa-comment commentover p-1 rounded-circle fs-3"></i></span>
+                </a>
+                <span>{{ post.comment_count}}</span>
+            </span>
+
+
+            <div class="mt-5 fs-5">{{ post.body|safe }}</div>
+        </div>
+    </div>
+    {% if post.user != user %}
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="bg-white shadow p-2 rounded">
+                <a href="{% url 'view_profile' post.user.pk %}" class="text-decoration-none">
+                    <img src="
+                        {% if post.user.profile.image %}
+                            {{ post.user.profile.image.url }}
+                        {% else %}
+                            {% static 'images/user.png' %} 
+                        {% endif %}"
+                    class="rounded-circle"
+                    height="40"
+                    loading="lazy"
+                    />
+                    <span class="fw-bold text-black px-1 textover">{{ post.user.username }}</span>
+                </a>
+                <div class="mt-2">{{ post.user.first_name|title}} {{ post.user.last_name|title}} </div>
+                <div class="text-center mt-3"><button class="btn btn-primary w-100">Follow</button></div>
+                <div class="text-secondary">Posts</div>
+                <div>{{ post.profile.post_count}}</div>
+                {% if post.profile.location %}
+                    <div class="text-secondary">Location</div>
+                    <div>{{post.profile.location|title}}</div>
+                {% endif %}
+                {% if post.profile.work %}
+                    <div class="text-secondary">Work</div>
+                    <div>{{post.profile.work}}</div>
+                {% endif %}
+                {% if post.profile.education %}
+                    <div class="text-secondary">Education</div>
+                    <div>{{post.profile.education}}</div>
+                {% endif %}
+                <div class="text-secondary">Joined on</div>
+                <div>{{post.user.date_joined}}</div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock contents %}

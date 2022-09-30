@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'core.apps.CoreConfig',
     'ckeditor',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -142,8 +143,8 @@ STATICFFILES_DIR=[
     os.path.join(BASE_DIR,'static')
 ]
 
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login_view'
+LOGIN_URL = 'login_view'
+LOGOUT_REDIRECT_URL = 'home'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

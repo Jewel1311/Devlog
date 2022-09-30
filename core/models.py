@@ -61,7 +61,7 @@ class Posts(models.Model):
     slug = AutoSlugField(max_length=200,unique=True,populate_from='title',null=True)
 
     def get_absolute_url(self):
-        return reverse('postdetail', kwargs={'slug':self.slug})
+        return reverse('read_post', kwargs={'slug':self.slug})
 
     def save(self):
         super().save()  # saving image first

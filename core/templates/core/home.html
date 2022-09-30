@@ -35,14 +35,14 @@
            <i class="fa-sharp fa-solid fa-pen fa-fw me-3"></i><span class="fw-bold">Write</span>
         </a>
         <a
-           href="#"
-           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'home' %} text-primary {% endif %}"
+           href="{% url 'myfeed' %}"
+           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'myfeed' %} text-primary {% endif %}"
            >
            <i class="fa-solid fa-bars-staggered fa-fw me-3"></i><span class ="fw-bold">My Feed</span>
         </a>
         <a
-           href="#"
-           class="list-group-item list-group-item-action py-4 ripple"
+           href="{% url 'home' %}"
+           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'home' %} text-primary {% endif %}"
            >
            <i class="fa-regular fa-compass fa-fw me-3"></i></i><span class ="fw-bold">Explore</span>
         </a>
@@ -57,7 +57,7 @@
         class="list-group-item list-group-item-action py-4 ripple"
         >
         <i class="fa-solid fa-bookmark fa-fw me-3"></i><span class ="fw-bold">Bookmarked</span>
-        </a>
+      </a>
 
         {% else %}
           <div class="mt-5 mx-1 rounded text-center fs-5 p-2 py-5 border">
@@ -75,7 +75,7 @@
   <!-- Navbar -->
   <nav
        id="main-navbar"
-       class="navbar navbar-expand-lg navbar-light bg-white navcolor fixed-top border-bottom" 
+       class="navbar navbar-expand-lg navbar-light bg-white navcolor fixed-top" 
        >
     <!-- Container wrapper -->
     <div class="container-fluid">
@@ -93,23 +93,22 @@
       </button>
 
       <!-- Brand -->
-      <a class="navbar-brand mx-2" href="#">
+      <a class="navbar-brand mx-2" href="{% if user.is_authenticated %}{% url 'myfeed' %}{% else %} {% url 'home' %}{% endif %}">
         <div class="fw-bold fs-3">DEV<span class="bg-primary text-white p-1 m-1 rounded">LOG</span></div>
       </a>
     
       <!-- Right links -->
       
-      <ul class="navbar-nav ms-auto d-flex flex-row">
+      <ul class="navbar-nav ms-auto d-flex flex-row ">
         {% if user.is_authenticated %}
         <!-- Avatar -->
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown mx-3 ">
           <a
-             class="nav-link dropdown-toggle hidden-arrow d-flex align-items-center"
-             href="#"
-             id="navbarDropdownMenuLink"
-             role="button"
-             data-bs-toggle="dropdown"
-             aria-expanded="false"
+            class = "nav-link dropdown-toggle hidden-arrow d-flex align-items-center"
+            role="button" 
+            id="dropdownMenuLink" 
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
              >
             <img
                  src="{% if user.profile.image %}{{user.profile.image.url}} {% else %}{% static 'images/user.png' %}{% endif %}"
@@ -120,22 +119,22 @@
           </a>
           <ul 
               class="dropdown-menu dropdown-menu-end "
-              aria-labelledby="navbarDropdownMenuLink"
+              id="dropdownMenuLink"
               >
             <li><a class="dropdown-item" href="{% url 'blogger_profile' %}">My profile</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="{% url 'myposts' %}">My posts</a></li>
             <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
           </ul>
         </li>
-        {% else %}
+      </ul>
+    </div>
+    {% else %}
           <a href="{% url 'login_view' %}" class="text-decoration-none m-2 fw-bold p-2">Login</a>
           <a href="{% url 'register' %}" 
             class="text-decoration-none m-2 text-primary fw-bold border borderbutton border-primary p-2 rounded">
             Create Account
           </a>
-        {% endif %}
-      </ul>
-    </div>
+    {% endif %}
     <!-- Container wrapper -->
   </nav>
   <!-- Navbar -->
