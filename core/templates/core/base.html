@@ -27,6 +27,37 @@
     <script>
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
         const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+    
+
+$( "button" ).click(function() {
+        var id = $(this).attr('id')
+        
+
+        //like function
+        if(id = "likebutton"){
+            var postid = $(this).attr('value')
+            $.ajax({
+                type : "get",
+                url : "{% url 'post_likes' %}",
+                data : {
+                    postid : postid
+                },
+                success: function(response){
+                    $('#likecount' + postid).text(response.count)
+                    if(response.inc ===  true){
+                        $('#hicon' + postid).addClass('setred');
+                    }
+                    else if(response.inc ===  false){
+                        $('#hicon' + postid).removeClass('setred');
+                    }
+                },
+            })
+        }  
+        
+        
+
+})
     </script>
     
 </body>

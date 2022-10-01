@@ -15,7 +15,7 @@ urlpatterns = [
     path('myfeed',views.myfeed, name='myfeed'),
     path('myposts',views.myposts, name='myposts'),
     path('read_post/<slug:slug>/',views.read_post, name='read_post'),
-    path('post_likes/<int:pk>/',views.post_likes, name='post_likes'),
+    path('post_likes/',views.post_likes, name='post_likes'),
 ]
 
 if settings.DEBUG:

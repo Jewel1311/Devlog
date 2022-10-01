@@ -1,6 +1,6 @@
 import re
 import readtime
-from . models import Tags
+from . models import Tags, Posts
 
 def extract_tags(tag):
     tag_set = set(re.findall(r"(\#\w+)", tag))
@@ -28,3 +28,10 @@ def save_tags(tags):
             )
             post_tags.append(t)
     return post_tags
+
+def get_is_liked(posts, user):
+    is_liked = {}
+    for post in posts:
+        if user in post.likes.all():
+            is_liked[post] = True
+    return is_liked

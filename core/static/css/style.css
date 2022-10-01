@@ -59,10 +59,14 @@ body {
   color:  #ffff!important;
 }
 .likeover:hover{
-  color: red!important;
+  color: #df4759!important;
   background-color: rgb(255,0,0,.3);
 }
 .commentover:hover{
   color: rgb(0, 179, 255)!important;
   background-color: rgb(0, 179, 255,.3);
+}
+
+.setred{
+  color: #df4759 !important;
 }

@@ -59,6 +59,7 @@ class Posts(models.Model):
     save_count = models.BigIntegerField(default = 0)
     comment_count = models.BigIntegerField(default = 0)
     slug = AutoSlugField(max_length=200,unique=True,populate_from='title',null=True)
+    draft = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         return reverse('read_post', kwargs={'slug':self.slug})
@@ -83,6 +84,7 @@ class Posts(models.Model):
     @classmethod    
     def get_tag_post(self, tag):
         return self.objects.filter(tags = tag).order_by('-id')
+
         
     def __str__(self):
         return str(self.title)

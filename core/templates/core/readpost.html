@@ -32,15 +32,14 @@
                   <a href="{{ post.coverimage.url }}" class="col-lg-3"> <img src="{{ post.coverimage.url }}" class="img-fluid"   alt=""></a>
                 {% endif %}
             </div>
-            <span class="mt-2">
-                <a href="{% url 'post_likes' post.pk %}" class="text-black text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Like Post">
-                    <span><i class="{% if is_liked %} fa-solid fa-heart text-danger {% else %}fa-regular fa-heart{% endif %} likeover p-1 rounded-circle fs-3
-                        "></i></span> 
-                    </a>
-                <span id="likecount">{{ post.like_count}}</span>
+            <span>
+                <button class="btn btn-link text-decoration-none" id="likebutton" value="{{post.id}}">
+                    <span class="fs-4"><i id="hicon{{post.id}}" class="fa-solid fa-heart text-secondary likeover rounded-circle p-1 {% if is_liked %} setred {% endif %}"></i></span>
+                </button>
+                <span id="likecount{{post.id}}">{{ post.like_count}}</span>
             </span>
-            <span class="mt-2 mx-3">
-                <a href="#" class="text-decoration-none text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Comments">
+            <span class="mx-2">
+                <a href="#" class=" btn btn-link text-decoration-none text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Comments">
                     <span><i class="fa-regular fa-comment commentover p-1 rounded-circle fs-3"></i></span>
                 </a>
                 <span>{{ post.comment_count}}</span>

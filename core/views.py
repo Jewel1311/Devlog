@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from core.forms import PostForm, ProfileForm, UserForm, UserRegistrationForm, LoginForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from core.utils import get_read_time, save_tags
+from core.utils import get_is_liked, get_read_time, save_tags
 from . import decorators
 from django.contrib.auth.decorators import login_required
 from . models import Posts, Profile, Tags
@@ -16,9 +16,11 @@ from django.contrib.auth.models import User
 def home(request):
     posts = Posts.get_recent_posts()
     popular = Posts.get_top_posts()[:5]
+    is_liked = get_is_liked(posts,request.user)
     context = {
         'posts':posts,
-        'popular':popular
+        'popular':popular,
+        'is_liked':is_liked
     }
     return render(request, 'core/posts.html',context)
 
@@ -27,12 +29,60 @@ def top_posts(request):
     posts = Posts.get_top_posts()
     popular_tag = Tags.objects.order_by('-count')[0]  #get the tag with high count
     popular = Posts.get_tag_post(popular_tag.id)[:5]
+    is_liked = get_is_liked(posts,request.user)
     context = {
         'posts':posts,
         'popular':popular,
-        'tag':popular_tag
+        'tag':popular_tag,
+        'is_liked':is_liked
     }
     return render(request, 'core/posts.html',context)
+
+#blogger home
+@login_required
+def myfeed(request):
+    popular = Posts.get_top_posts()[:5]
+    context = {
+        'popular':popular
+    }
+    return render(request,'core/posts.html',context)
+
+@login_required
+def myposts(request):
+    posts = Posts.objects.filter(user = request.user).order_by('-id')
+    is_liked = get_is_liked(posts,request.user)
+    context ={
+        'posts':posts,
+        'is_liked' :is_liked
+    }
+    return render(request, 'core/posts.html',context)
+
+def read_post(request, slug):
+    post = Posts.objects.get(slug = slug)
+    is_liked = False
+    if request.user in post.likes.all():
+        is_liked = True
+    context = {
+        'post':post,
+        'is_liked':is_liked
+    }
+    return render(request, 'core/readpost.html',context)
+
+@login_required
+def post_likes(request):
+    pk = request.GET.get("postid")
+    print("hello" ,pk)
+    post = Posts.objects.get(pk = pk)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        post.like_count -=1
+        inc = False
+    else:
+        post.likes.add(request.user)
+        post.like_count +=1
+        inc = True
+    post.save()
+    return JsonResponse({'count':post.like_count, 'inc':inc})
 
 
 @decorators.check_loggedin
@@ -149,43 +199,3 @@ def edit_profile(request):
             'uform':uform
         }
         return render(request, 'core/editprofile.html',context)
-
-#blogger home
-@login_required
-def myfeed(request):
-    popular = Posts.get_top_posts()[:5]
-    context = {
-        'popular':popular
-    }
-    return render(request,'core/posts.html',context)
-
-@login_required
-def myposts(request):
-    posts = Posts.objects.filter(user = request.user).order_by('-id')
-    context ={
-        'posts':posts
-    }
-    return render(request, 'core/posts.html',context)
-
-def read_post(request, slug):
-    post = Posts.objects.get(slug = slug)
-    is_liked = False
-    if request.user in post.likes.all():
-        is_liked = True
-    context = {
-        'post':post,
-        'is_liked':is_liked
-    }
-    return render(request, 'core/readpost.html',context)
-
-@login_required
-def post_likes(request, pk):
-    post = Posts.objects.get(pk = pk)
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
-        post.like_count -=1
-    else:
-        post.likes.add(request.user)
-        post.like_count +=1
-    post.save()
-    return redirect('read_post', slug=post.slug)
