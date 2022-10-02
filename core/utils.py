@@ -35,3 +35,10 @@ def get_is_liked(posts, user):
         if user in post.likes.all():
             is_liked[post] = True
     return is_liked
+
+def get_is_saved(posts, user):
+    is_saved = {}
+    for post in posts:
+        if user in post.saved.all():
+            is_saved[post] = True
+    return is_saved

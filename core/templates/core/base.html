@@ -22,23 +22,20 @@
 
     {% block body %} {% endblock body %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/script.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script>
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
         const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+ 
 
-    
-
-$( "button" ).click(function() {
+$( "button" ).click(function(e) {
         var id = $(this).attr('id')
-        
 
         //like function
-        if(id = "likebutton"){
+        if(id == "likebutton"){
             var postid = $(this).attr('value')
             $.ajax({
-                type : "get",
+                type: "get",
                 url : "{% url 'post_likes' %}",
                 data : {
                     postid : postid
@@ -46,15 +43,62 @@ $( "button" ).click(function() {
                 success: function(response){
                     $('#likecount' + postid).text(response.count)
                     if(response.inc ===  true){
-                        $('#hicon' + postid).addClass('setred');
+                        $('#hicon' + postid).addClass('setred')
                     }
                     else if(response.inc ===  false){
-                        $('#hicon' + postid).removeClass('setred');
+                        $('#hicon' + postid).removeClass('setred')
                     }
+                   
                 },
             })
         }  
         
+        //bookmark function
+        else if(id == "savebutton"){
+            var postid = $(this).attr('value')
+            $.ajax({
+                type: "get",
+                url : "{% url 'post_bookmark' %}",
+                data : {
+                    postid : postid
+                },
+                success: function(response){
+                    if(response.inc ===  true){
+                        $('#sicon' + postid).addClass('setblue')
+                    }
+                    else if(response.inc ===  false){
+                        $('#sicon' + postid).removeClass('setblue')
+                    }
+                   
+                },
+            })
+        }
+        
+        //followers 
+        else if(id == "followbtn"){
+            var userid = $(this).attr('value')
+            $.ajax({
+                type: "get",
+                url : "{% url 'followers' %}",
+                data : {
+                    userid : userid
+                },
+                success: function(response){
+                    $('#fc').text(response.fc)
+                    if(response.add ===  true){
+                        $('#followbtn').removeClass('btn-primary')
+                        $('#followbtn').addClass('btn-danger')
+                        $('#followbtn').text("Unfollow")
+                    }
+                    else if(response.add ===  false){
+                        $('#followbtn').removeClass('btn-danger')
+                        $('#followbtn').addClass('btn-primary')
+                        $('#followbtn').text("Follow")
+                    }
+                   
+                },
+            })
+        }
         
 
 })

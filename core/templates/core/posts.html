@@ -50,7 +50,7 @@
 
         {% if user.is_authenticated %}
             {% if not posts %}
-            <div class="mt-5 fw-bold fs-5 text-center">Explore, find people and tags to follow</div>
+            <div class="mt-5 fw-bold fs-5 text-center">Explore, find people and tags </div>
             <div class="text-center"><a href="{% url 'home' %}" class="btn btn-primary mt-3 fw-bold">Explore</a></div>
             {% endif %}
         {% endif %}
@@ -92,10 +92,10 @@
                         <span>
 
                             <span>
-                                <button class="btn btn-link text-decoration-none" id="likebutton" value="{{post.id}}">
+                                <button class="btn btn-link text-decoration-none" id="likebutton" value="{{post.id}}" >
                                     <span class="fs-4"><i id="hicon{{post.id}}" class="fa-solid fa-heart text-secondary likeover rounded-circle p-1 
                                         {% if is_liked %}
-                                            {% if is_liked|get_liked:post %} 
+                                            {% if is_liked|get_dict:post %} 
                                                 setred 
                                             {% endif %}
                                         {% endif %}
@@ -112,7 +112,19 @@
 
                         <span>
                             <span class="px-3">{{ post.readtime }} min read</span>
-                            <span class="text-black text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Save Post"><span class="fs-4"><i class="fa-regular fa-bookmark"></i></span></span>
+
+                            <button id="savebutton" value="{{post.id}}" 
+                                class=" btn btn- link text-secondary">
+                                <span class="fs-4">
+                                    <i id="sicon{{post.id}}" class="fa-solid fa-bookmark saveover rounded-circle 
+                                    p-2
+                                    {% if is_saved %}
+                                            {% if is_saved|get_dict:post %} 
+                                                setblue 
+                                            {% endif %}
+                                    {% endif %}"></i>
+                                </span>
+                            </button>
                                
                         </span>
                  

@@ -1,0 +1,41 @@
+{% extends 'core/home.html' %}
+{% load static %}
+{% block contents %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="bg-white shadow rounded mx-4 p-2 ">
+            {% if post %}
+
+            <div class="fs-4 fw-bold px-2"> <a href="{% url 'read_post' post.slug  %}" class="linkover text-black text-decoration-none">{{ post.title }}</a></div>
+            <div class="py-3 px-2">Liked by {{ post.like_count }}</div>
+            {% for people in post.likes.all %}
+            <div class="border-top py-3 px-3">
+                <span>
+                    <a href="{% url 'view_profile' people.pk %}" class="text-decoration-none text-black"><img src="
+                        {% if people.profile.image %}
+                            {{ people.profile.image.url }}
+                        {% else %}
+                            {% static 'images/user.png' %} 
+                        {% endif %}"
+                        class="rounded-circle"
+                        height="30"
+                        loading="lazy" 
+                        />        
+                {% if people == user %}
+                    <span class="fw-bold  p-2">You</span>
+                {% else%}
+                    <span class="fw-bold p-2">{{ people.username }}</span>
+                {% endif %}
+            </a>
+                </span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            
+
+            
+
+            </div>
+        </div>
+    </div>
+{% endblock contents %}

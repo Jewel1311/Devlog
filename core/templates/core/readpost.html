@@ -26,7 +26,7 @@
                 <div class="my-2">Published on {{ post.date|date }}</div>
             </div>
             <div class="row">
-                <div class="card-title fw-bold fs-4  {% if post.coverimage %} col-lg-9 {% endif %}"><a href="{{ post.get_absolute_url }}" class="text-decoration-none text-black linkover">{{ post.title }}</a>
+                <div class="card-title fw-bold fs-4  {% if post.coverimage %} col-lg-9 {% endif %}">{{ post.title }}
                 </div>
                 {% if post.coverimage %}
                   <a href="{{ post.coverimage.url }}" class="col-lg-3"> <img src="{{ post.coverimage.url }}" class="img-fluid"   alt=""></a>
@@ -37,12 +37,26 @@
                     <span class="fs-4"><i id="hicon{{post.id}}" class="fa-solid fa-heart text-secondary likeover rounded-circle p-1 {% if is_liked %} setred {% endif %}"></i></span>
                 </button>
                 <span id="likecount{{post.id}}">{{ post.like_count}}</span>
+                {% if post.user == user %}<span class="px-1"> <a href="{% url 'view_likes' post.pk %}" class="text-decoration-none">View likes </a></span> {% endif %}
             </span>
             <span class="mx-2">
                 <a href="#" class=" btn btn-link text-decoration-none text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Comments">
                     <span><i class="fa-regular fa-comment commentover p-1 rounded-circle fs-3"></i></span>
                 </a>
                 <span>{{ post.comment_count}}</span>
+            </span>
+            <span>
+                <button id="savebutton" value="{{post.id}}" 
+                                class=" btn btn- link text-secondary">
+                                <span class="fs-4">
+                                    <i id="sicon{{post.id}}" class="fa-solid fa-bookmark saveover rounded-circle 
+                                    p-2
+                                    {% if is_saved %}
+                                        setblue                 
+                                    {% endif %}"></i>
+                                </span>
+                </button>
+                <span> {% if post.user == user %} {{ post.save_count }} saves {% endif %} </span>
             </span>
 
 
@@ -66,22 +80,30 @@
                     <span class="fw-bold text-black px-1 textover">{{ post.user.username }}</span>
                 </a>
                 <div class="mt-2">{{ post.user.first_name|title}} {{ post.user.last_name|title}} </div>
-                <div class="text-center mt-3"><button class="btn btn-primary w-100">Follow</button></div>
-                <div class="text-secondary">Posts</div>
-                <div>{{ post.profile.post_count}}</div>
-                {% if post.profile.location %}
-                    <div class="text-secondary">Location</div>
-                    <div>{{post.profile.location|title}}</div>
+                {% if user.is_authenticated %}
+                <button id="followbtn" value="{{post.user.id}}" class="w-100 mt-2 {% if is_following %}btn btn-danger{% else %}btn btn-primary{% endif %}"  style="z-index: 1;">
+                    {% if is_following%}
+                    Unfollow
+                    {% else %}
+                    Follow
+                    {% endif %}
+                  </button>
                 {% endif %}
-                {% if post.profile.work %}
-                    <div class="text-secondary">Work</div>
-                    <div>{{post.profile.work}}</div>
+                <div class="text-secondary mt-2">Posts</div>
+                <div>{{ post.user.profile.post_count}}</div>
+                {% if post.user.profile.location %}
+                    <div class="text-secondary mt-2">Location</div>
+                    <div>{{post.user.profile.location|title}}</div>
                 {% endif %}
-                {% if post.profile.education %}
-                    <div class="text-secondary">Education</div>
-                    <div>{{post.profile.education}}</div>
+                {% if postuser..profile.work %}
+                    <div class="text-secondary mt-2">Work</div>
+                    <div>{{post.user.profile.work}}</div>
                 {% endif %}
-                <div class="text-secondary">Joined on</div>
+                {% if post.user.profile.education %}
+                    <div class="text-secondary mt-2">Education</div>
+                    <div>{{post.user.profile.education}}</div>
+                {% endif %}
+                <div class="text-secondary mt-2">Joined on</div>
                 <div>{{post.user.date_joined}}</div>
             </div>
         </div>

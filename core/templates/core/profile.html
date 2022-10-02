@@ -13,12 +13,21 @@
                   class="img-fluid img-thumbnail mt-4 mb-2"
                   style="width: 150px; z-index: 1">
                 
-                {% if user == blogger %}
+                {% if user == blogger  %}
                   <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary" data-mdb-ripple-color="primary"
                     style="z-index: 1;">
                     Edit profile
                   </a>
-                {% endif %}
+                  {% endif %}
+                  {% if user.is_authenticated and user != blogger %}
+                    <button id="followbtn" value="{{blogger.id}}" class="{% if is_following %}btn btn-danger{% else %}btn btn-primary{% endif %}"  style="z-index: 1;">
+                      {% if is_following%}
+                      Unfollow
+                      {% else %}
+                      Follow
+                      {% endif %}
+                    </button>
+                  {% endif %}
               </div>
               <div class="ms-3" style="margin-top: 120px;">
                 <p class="fw-bold fs-4">{{ blogger.username }}</p>
@@ -28,11 +37,13 @@
             <div class="p-4 text-black" style="background-color: #f8f9fa;">
               <div class="d-flex justify-content-end text-center py-1">
                 <div>
-                  <p class="mb-1 h5">{{ profile.post_count }}</p>
+                  <a href="{% url 'myposts' blogger.id %}" class="text-decoration-none">
+                  <p class="mb-1 h5 text-black">{{ profile.post_count }}</p>
                   <p class="small text-muted mb-0">Posts</p>
+                 </a>
                 </div>
                 <div class="px-3">
-                  <p class="mb-1 h5">{{ profile.followers_count }}</p>
+                  <p class="mb-1 h5" id="fc">{{ profile.followers_count }}</p>
                   <p class="small text-muted mb-0">Followers</p>
                 </div>
                 <div>
@@ -75,7 +86,7 @@
                 {% for post in posts %}
                 <div class="row border-top py-2">
                   <div class="py-1"> <i class="fa-regular fa-calendar-days text-secondary"></i><span class="px-2">{{ post.date|date}}</span></div>
-                  <a href="#" class="text-decoration-none text-black linkover"><div class="mx-4 my-3">{{post.title}}</div></a>
+                  <a href="{% url 'read_post' post.slug %}" class="text-decoration-none text-black linkover"><div class="mx-4 my-3">{{post.title}}</div></a>
                 </div>
                 {% endfor %}
             </div>

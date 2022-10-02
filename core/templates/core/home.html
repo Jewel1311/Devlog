@@ -53,8 +53,8 @@
         <i class="fa-solid fa-tag fa-fw me-3"></i></i><span class ="fw-bold">Tags</span>
         </a>
         <a
-        href="#"
-        class="list-group-item list-group-item-action py-4 ripple"
+        href="{% url 'view_bookmarked' %}"
+        class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'view_bookmarked' %} text-primary {% endif %}"
         >
         <i class="fa-solid fa-bookmark fa-fw me-3"></i><span class ="fw-bold">Bookmarked</span>
       </a>
@@ -122,18 +122,20 @@
               id="dropdownMenuLink"
               >
             <li><a class="dropdown-item" href="{% url 'blogger_profile' %}">My profile</a></li>
-            <li><a class="dropdown-item" href="{% url 'myposts' %}">My posts</a></li>
+            <li><a class="dropdown-item" href="{% url 'myposts' user.pk %}">My posts</a></li>
             <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
           </ul>
         </li>
       </ul>
     </div>
     {% else %}
+    <div class="d-none d-lg-block">
           <a href="{% url 'login_view' %}" class="text-decoration-none m-2 fw-bold p-2">Login</a>
           <a href="{% url 'register' %}" 
             class="text-decoration-none m-2 text-primary fw-bold border borderbutton border-primary p-2 rounded">
             Create Account
           </a>
+      </div>
     {% endif %}
     <!-- Container wrapper -->
   </nav>
