@@ -43,12 +43,16 @@
                  </a>
                 </div>
                 <div class="px-3">
-                  <p class="mb-1 h5" id="fc">{{ profile.followers_count }}</p>
-                  <p class="small text-muted mb-0">Followers</p>
+                  <a href="{% url 'view_followers' blogger.id %}" class="text-decoration-none">
+                    <p class="mb-1 h5 text-black">{{ profile.followers_count }}</p>
+                    <p class="small text-muted mb-0">Followers</p>
+                   </a>
                 </div>
                 <div>
-                  <p class="mb-1 h5">{{ profile.following_count }}</p>
-                  <p class="small text-muted mb-0">Following</p>
+                  <a href="{% url 'view_following' blogger.id %}" class="text-decoration-none">
+                    <p class="mb-1 h5 text-black">{{ profile.following_count }}</p>
+                    <p class="small text-muted mb-0">Following</p>
+                   </a>
                 </div>
               </div>
             </div>
@@ -89,6 +93,7 @@
                   <a href="{% url 'read_post' post.slug %}" class="text-decoration-none text-black linkover"><div class="mx-4 my-3">{{post.title}}</div></a>
                 </div>
                 {% endfor %}
+                <div class="d-flex justify-content-end"><a href="{% url 'myposts' blogger.id %}" class="text-decoration-none">View All</a></div>
             </div>
           </div>
         </div>

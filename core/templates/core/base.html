@@ -100,6 +100,32 @@ $( "button" ).click(function(e) {
             })
         }
         
+        //tag followers
+        else if(id == "tagfollowbtn"){
+            var tagid = $(this).attr('value')
+            $.ajax({
+                type: "get",
+                url : "{% url 'tag_follow' %}",
+                data : {
+                    tagid : tagid
+                },
+                success: function(response){
+                    $('#tag_fc').text(response.fc)
+                    if(response.add ===  true){
+                        $('#tagfollowbtn').removeClass('btn-primary')
+                        $('#tagfollowbtn').addClass('btn-danger')
+                        $('#tagfollowbtn').text("Unfollow")
+                    }
+                    else if(response.add ===  false){
+                        $('#tagfollowbtn').removeClass('btn-danger')
+                        $('#tagfollowbtn').addClass('btn-primary')
+                        $('#tagfollowbtn').text("Follow")
+                    }
+                   
+                },
+            })
+        }
+
 
 })
     </script>

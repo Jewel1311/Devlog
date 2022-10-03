@@ -4,6 +4,9 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="bg-white shadow rounded mx-4 p-2 ">
+
+                <!-- people who liked post -->
+
             {% if post %}
 
             <div class="fs-4 fw-bold px-2"> <a href="{% url 'read_post' post.slug  %}" class="linkover text-black text-decoration-none">{{ post.title }}</a></div>
@@ -32,8 +35,72 @@
             {% endfor %}
             {% endif %}
             
+            <!-- people following user  -->
+            {% if peoples %}
+                 
+                {% if following %}
+                    
+                    <div class="fw-bold  my-4">Following <span class="px-2 mx-1 bg-primary bg-opacity-25 rounded text-primary">{{ usr.profile.following_count }}</span></div>
 
+                    {% for people in peoples %}
+                    <div class="border-top py-3 px-3">
+                        <span>
+                            <a href="{% url 'view_profile' people.user.pk %}" class="text-decoration-none text-black"><img src="
+                                {% if people.image %}
+                                    {{ people.image.url }}
+                                {% else %}
+                                    {% static 'images/user.png' %} 
+                                {% endif %}"
+                                class="rounded-circle"
+                                height="30"
+                                loading="lazy" 
+                                />        
+                            <span class="fw-bold p-2">{{ people.user.username }}</span>
+                    </a>
+                        </span>
+                    </div>
+                    {% endfor %}
+
+                    {% if tags %}
+                    {% for tag in tags %}
+                    <div class="border-top py-3 px-3">
+                        <span>
+                            <a href="{{ tag.get_absolute_url }}" class="text-decoration-none text-black"><img src="
+                                {% static 'images/hashtag.png' %}"
+                                class="rounded-circle"
+                                height="30"
+                                loading="lazy" 
+                                />        
+                            <span class="fw-bold p-2">{{ tag.name }}</span>
+                    </a>
+                        </span>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
             
+                {% else %}
+                    <div class="fw-bold  my-4">Followers <span class="px-2 mx-1 bg-primary bg-opacity-25 rounded text-primary">{{ profile.followers_count }}</span></div>
+                    {% for people in peoples %}
+                        <div class="border-top py-3 px-3">
+                            <span>
+                                <a href="{% url 'view_profile' people.pk %}" class="text-decoration-none text-black"><img src="
+                                    {% if people.profile.image %}
+                                        {{ people.profile.image.url }}
+                                    {% else %}
+                                        {% static 'images/user.png' %} 
+                                    {% endif %}"
+                                    class="rounded-circle"
+                                    height="30"
+                                    loading="lazy" 
+                                    />        
+                                <span class="fw-bold p-2">{{ people.username }}</span>
+                        </a>
+                            </span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+            {% endif %}
 
             </div>
         </div>

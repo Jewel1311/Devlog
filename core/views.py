@@ -1,7 +1,8 @@
-from datetime import datetime, timezone
+from ast import keyword
+import datetime
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from core.forms import PostForm, ProfileForm, UserForm, UserRegistrationForm, LoginForm
+from core.forms import PostForm, ProfileForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from core.utils import get_is_liked, get_read_time, save_tags, get_is_saved
@@ -9,6 +10,7 @@ from . import decorators
 from django.contrib.auth.decorators import login_required
 from . models import Posts, Profile, Tags
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 
@@ -47,16 +49,30 @@ def top_posts(request):
 @login_required
 def myfeed(request):
     popular = Posts.get_top_posts()[:5]
-    # profile = Profile.objects.get(user = request.user)
-    # if 2  in User.followers.all():
-    #     print("follower")
-    #     # posts.append(Posts.objects.filter(user = follower, active=True))
+    posts = []
+    posts_id = []
+
+    #find post id of followers
+    for people in request.user.followers.all(): #reverse lookup m2m field using related name
+        people_post = Posts.objects.filter(user = people.user, active=True)
+        for post in people_post:
+            posts_id.append(post.id)
+
+    posts_id.sort(reverse=True) 
+  
+    for post in posts_id:
+        posts.append(Posts.objects.get(pk = post))
+
+    is_liked = get_is_liked(posts,request.user)
+    is_saved = get_is_saved(posts,request.user)
     context = {
         'popular':popular,
+        'posts':posts,
+        'is_liked' :is_liked,
+        'is_saved':is_saved
     }
     return render(request,'core/posts.html',context)
 
-@login_required
 def myposts(request,pk):
     posts = Posts.objects.filter(user = pk ,active=True).order_by('-id')
     is_liked = get_is_liked(posts,request.user)
@@ -280,3 +296,126 @@ def followers(request):
         profile1.save()
         profile2.save()
         return JsonResponse({'fc':profile1.followers_count,'add':add})
+
+
+def view_followers(request, pk):
+    profile = Profile.objects.get(user = pk)
+    context = {
+        'profile':profile,
+        'peoples':profile.connections.all()
+    }
+    return render(request, 'core/peopleview.html', context)
+
+
+def view_following(request, pk):
+    usr = User.objects.get(pk = pk)
+    tags = request.user.tagfollower.all()
+    context = {
+        'usr':usr,
+        'peoples':usr.followers.all(),
+        'tags':tags,
+        'following':True
+    }
+    return render(request, 'core/peopleview.html', context)
+
+def search_posts(request):
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            keyword = form.cleaned_data['search']
+            posts = Posts.objects.filter(title__icontains=keyword , active=True).order_by('-date')
+            is_liked = get_is_liked(posts,request.user)
+            is_saved = get_is_saved(posts,request.user)
+            context = {
+                'posts':posts,
+                'form':form,
+                'is_liked' :is_liked,
+                'is_saved':is_saved
+            }
+
+            return render(request, 'core/search.html',context)
+    else:
+        form = SearchForm()
+        context = {
+            'form':form
+        }
+        return render(request, 'core/search.html',context)
+
+def search_people(request):
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            keyword = form.cleaned_data['search']
+            peoples = User.objects.filter(Q(username__icontains=keyword) | Q(first_name__icontains=keyword) | Q(first_name__icontains=keyword)).exclude(is_superuser=True)
+            context = {
+                'peoples':peoples,
+                'form':form,
+            }
+
+            return render(request, 'core/search.html',context)
+    else:
+        form = SearchForm()
+        context = {
+            'form':form
+        }
+        return render(request, 'core/search.html',context)
+
+def search_tags(request):
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            keyword = form.cleaned_data['search']
+            tags = Tags.objects.filter(name__icontains=keyword)
+            context = {
+                'tags':tags,
+                'form':form,
+            }
+
+            return render(request, 'core/search.html',context)
+    else:
+        form = SearchForm()
+        context = {
+            'form':form
+        }
+        return render(request, 'core/search.html',context)
+
+def tag_detail(request, slug):
+    tag = Tags.objects.get(slug = slug)
+    posts = []
+    is_following = False
+    all_posts = Posts.objects.filter(active = True).order_by('-id')
+    for post in all_posts:
+        if tag in post.tags.all():
+            posts.append(post)
+    is_liked = get_is_liked(posts,request.user)
+    is_saved = get_is_saved(posts,request.user)
+    if request.user in tag.followers.all():
+        is_following = True
+
+    context = {
+        'tag':tag,
+        'posts':posts,
+        'is_liked' :is_liked,
+        'is_saved':is_saved,
+        'is_following':is_following
+    }
+    return render(request, 'core/tags.html', context)
+
+@login_required
+def tag_follow(request):
+    tagid = request.GET.get('tagid')
+    tag = Tags.objects.get(pk = tagid)
+    profile = Profile.objects.get(user = request.user)
+    if request.user in tag.followers.all():
+        tag.followers.remove(request.user)
+        profile.following_count -= 1
+        tag.follower_count -= 1
+        add = False
+    else:
+        tag.followers.add(request.user)
+        profile.following_count += 1
+        tag.follower_count += 1
+        add = True
+    tag.save()
+    profile.save()
+    return JsonResponse({'fc':tag.follower_count,'add':add})

@@ -20,6 +20,20 @@ urlpatterns = [
     path('view_bookmarked/',views.view_bookmarked, name='view_bookmarked'),
     path('view_likes/<int:pk>/',views.view_likes, name='view_likes'),
     path('followers/',views.followers, name='followers'),
+    path('view_followers/<int:pk>/',views.view_followers, name='view_followers'),
+    path('view_following/<int:pk>/',views.view_following, name='view_following'),
+    path('search_posts/',views.search_posts, name='search_posts'),
+    path('search_people/',views.search_people, name='search_people'),
+    path('search_tags/',views.search_tags, name='search_tags'),
+    path('tag_detail/<slug:slug>/',views.tag_detail, name='tag_detail'),
+    path('tag_follow/',views.tag_follow, name='tag_follow'),
+
+
+
+
+
+
+
 
 
 

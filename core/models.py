@@ -1,4 +1,5 @@
 
+from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
@@ -26,11 +27,12 @@ class Profile(models.Model):
 class Tags(models.Model):
     name = models.CharField(max_length = 200, unique=True)
     count = models.BigIntegerField()
-    followers = models.ManyToManyField(User)
+    followers = models.ManyToManyField(User, related_name= 'tagfollower')
     slug = AutoSlugField(max_length=200,unique=True,populate_from='name',null=True)
+    follower_count = models.BigIntegerField(default=0)
 
     def get_absolute_url(self):
-        return reverse('tagdetails', kwargs={'slug':self.slug})
+        return reverse('tag_detail', kwargs={'slug':self.slug})
 
     @classmethod
     def get_tag(self,tag):

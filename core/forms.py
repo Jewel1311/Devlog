@@ -71,3 +71,9 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username','first_name','last_name']
+
+class SearchForm(forms.Form):
+    search = forms.CharField(label = "",widget=forms.TextInput(attrs={
+        'class':'form-control rounded',
+        'placeholder':'Search'
+    }))
