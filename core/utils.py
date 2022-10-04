@@ -42,3 +42,9 @@ def get_is_saved(posts, user):
         if user in post.saved.all():
             is_saved[post] = True
     return is_saved
+
+def delete_tags(tags):
+    for tag in tags:
+        object = Tags.get_tag(tag) 
+        object.count -= 1
+        object.save()

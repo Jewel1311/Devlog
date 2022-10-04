@@ -14,8 +14,14 @@
             {% csrf_token %}
             {{ form.as_p }}
             {{ form.media }}
+
+            {% if tag_names %}
+                <input type="text" name="hashtags" class="form-control mb-3" placeholder="maximum 3 tags  (eg:#devlog)"
+                value = "{{tag_names}}" required>
+            {% endif%}
+
             <div class="text-center">
-                <button type="submit" class="btn btn-primary fw-bold">Create Post</button>
+                <button type="submit" class="btn btn-primary fw-bold">Publish</button>
             </div>
         </form>
     </div>

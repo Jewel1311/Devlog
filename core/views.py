@@ -1,11 +1,11 @@
-from ast import keyword
-import datetime
+from datetime import datetime
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from core.forms import PostForm, ProfileForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
+from requests import delete
+from core.forms import PostEditForm, PostForm, ProfileForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from core.utils import get_is_liked, get_read_time, save_tags, get_is_saved
+from core.utils import delete_tags, extract_tags, get_is_liked, get_read_time, save_tags, get_is_saved
 from . import decorators
 from django.contrib.auth.decorators import login_required
 from . models import Posts, Profile, Tags
@@ -54,11 +54,17 @@ def myfeed(request):
 
     #find post id of followers
     for people in request.user.followers.all(): #reverse lookup m2m field using related name
-        people_post = Posts.objects.filter(user = people.user, active=True)
+        people_post = Posts.objects.filter(user = people.user, active=True).exclude(user = request.user)
         for post in people_post:
             posts_id.append(post.id)
 
+    for tag in  request.user.tagfollower.all():
+        for post in Posts.objects.filter(tags = tag).exclude(user = request.user):        
+            posts_id.append(post.id)
+
+    posts_id = list(set(posts_id)) #for unique id
     posts_id.sort(reverse=True) 
+
   
     for post in posts_id:
         posts.append(Posts.objects.get(pk = post))
@@ -172,7 +178,43 @@ def write_post(request):
             'form':form, 
             'tags':tags
             }
-        return render(request, 'core/write.html',context)   
+        return render(request, 'core/write.html',context) 
+
+
+
+@login_required
+def edit_post(request, pk):
+    post = Posts.objects.get(pk = pk)
+
+    if request.method == "POST":
+        form = PostEditForm(request.POST, request.FILES, instance=post)
+        tags = request.POST['hashtags']
+        if form.is_valid():
+            delete_tags(post.tags.all())
+            new_tags = save_tags(tags)
+            post.tags.clear()
+            post.tags.add(*new_tags)
+            form.save()
+            return redirect('home')
+
+        return render(request, 'core/write.html',{'form':form})   
+
+    else:
+        if post.user == request.user:
+            tag_names = ""
+            form = PostEditForm(instance = post)    
+            for tag in post.tags.all():
+                tag_names += tag.name + " "
+            tags = Tags.objects.all().order_by('-count')[:10]
+            context = {
+                'tag_names':tag_names,
+                'form':form, 
+                'tags':tags
+                }
+            return render(request, 'core/write.html',context) 
+        else:
+            return redirect('read_post',slug=post.slug)
+
 
 @login_required  
 def blogger_profile(request):

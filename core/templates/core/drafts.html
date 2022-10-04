@@ -1,0 +1,8 @@
+{% extends 'core/home.html'%}
+{% block contents %}
+<div class="col-lg-12">
+    {% for post in posts%}
+    <a href="{% url 'edit_post' post.slug %}"> {{ post.title }}</a>
+    {% endfor %}
+</div>
+{% endblock contents %}

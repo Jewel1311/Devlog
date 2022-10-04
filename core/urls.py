@@ -27,6 +27,10 @@ urlpatterns = [
     path('search_tags/',views.search_tags, name='search_tags'),
     path('tag_detail/<slug:slug>/',views.tag_detail, name='tag_detail'),
     path('tag_follow/',views.tag_follow, name='tag_follow'),
+    path('edit_post/<int:pk>/',views.edit_post, name='edit_post'),
+
+   
+
 
 
 

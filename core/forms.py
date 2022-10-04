@@ -33,16 +33,30 @@ class LoginForm(forms.Form):
 
 class PostForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={
-        'class':'form-control fw-bold'
+        'class':'form-control fw-bold',
     }),required=True)
-    body = forms.CharField(widget = CKEditorUploadingWidget(attrs={'class':'form-control'}),required=True)
+    body = forms.CharField(widget = CKEditorUploadingWidget(attrs={
+        'class':'form-control',
+    }),required=True)
     tags = forms.CharField(validators=[tag_validation],widget=forms.TextInput(attrs={
-        'class':'form-control','placeholder':'maximum 3 tags  (eg:#devlog)'
+        'class':'form-control','placeholder':'maximum 3 tags  (eg:#devlog)'       
     }),required=True)
 
     class Meta:
         model = Posts
         fields = ['title','body','tags','coverimage']
+
+class PostEditForm(forms.ModelForm):
+    title = forms.CharField(widget=forms.TextInput(attrs={
+        'class':'form-control fw-bold',
+    }),required=True)
+    body = forms.CharField(widget = CKEditorUploadingWidget(attrs={
+        'class':'form-control',
+    }),required=True)
+
+    class Meta:
+        model = Posts
+        fields = ['title','body','coverimage']
 
 class ProfileForm(forms.ModelForm):
     image = forms.ImageField(label="",validators=[validate_image],widget=forms.FileInput(attrs={'class':"form-control my-1",'id':"photoid"}),required=False)
