@@ -44,7 +44,7 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Posts
-        fields = ['title','body','tags','coverimage']
+        fields = ['title','body','coverimage', 'tags']
 
 class PostEditForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={

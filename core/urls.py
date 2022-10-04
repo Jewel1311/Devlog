@@ -28,6 +28,8 @@ urlpatterns = [
     path('tag_detail/<slug:slug>/',views.tag_detail, name='tag_detail'),
     path('tag_follow/',views.tag_follow, name='tag_follow'),
     path('edit_post/<int:pk>/',views.edit_post, name='edit_post'),
+    path('delete_post/<int:pk>/',views.delete_post, name='delete_post'),
+
 
    
 

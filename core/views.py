@@ -461,3 +461,14 @@ def tag_follow(request):
     tag.save()
     profile.save()
     return JsonResponse({'fc':tag.follower_count,'add':add})
+
+@login_required
+def delete_post(request, pk):
+    post = Posts.objects.get(pk = pk)
+    delete_tags(post.tags.all())
+    post.tags.clear()
+    post.delete()
+    profile = Profile.objects.get(user = request.user)
+    profile.post_count -= 1
+    profile.save()
+    return redirect('home')
