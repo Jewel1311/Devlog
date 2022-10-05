@@ -1,14 +1,13 @@
 from datetime import datetime
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from requests import delete
 from core.forms import PostEditForm, PostForm, ProfileForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from core.utils import delete_tags, extract_tags, get_is_liked, get_read_time, save_tags, get_is_saved
+from core.utils import delete_tags, get_is_liked, get_read_time, save_tags, get_is_saved
 from . import decorators
 from django.contrib.auth.decorators import login_required
-from . models import Posts, Profile, Tags
+from . models import Comments, Posts, Profile, Tags
 from django.contrib.auth.models import User
 from django.db.models import Q
 
@@ -93,6 +92,7 @@ def myposts(request,pk):
 
 def read_post(request, slug):
     post = Posts.objects.get(slug = slug)
+    comments = Comments.objects.filter(post = post)
     profile = Profile.objects.get(user = post.user)
     is_liked = False
     is_saved = False
@@ -107,7 +107,9 @@ def read_post(request, slug):
         'post':post,
         'is_liked':is_liked,
         'is_saved':is_saved,
-        'is_following':is_following
+        'is_following':is_following,
+        'comments':comments
+        
     }
     return render(request, 'core/readpost.html',context)
 
@@ -472,3 +474,25 @@ def delete_post(request, pk):
     profile.post_count -= 1
     profile.save()
     return redirect('home')
+
+@login_required
+def add_comment(request):
+    if request.method == "POST":
+        postid = request.POST.get('post')
+        body = request.POST.get('comment')
+        if body is not "":
+            post = Posts.objects.get(pk = postid)
+            comment  = Comments()
+
+            comment.body = body
+            comment.post = post
+            comment.user = request.user
+            comment.date = datetime.now()
+
+            post.comment_count += 1
+            
+            post.save()
+            comment.save()
+    return HttpResponse()
+
+        

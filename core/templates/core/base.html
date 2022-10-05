@@ -134,6 +134,23 @@ $( "button" ).click(function(e) {
 
 
 })
+
+$("#commentform").submit(function (event) {
+    $.ajax({
+      type: "POST",
+      url: "{% url 'add_comment' %}",
+      data: {
+        comment: $('#commentbox').val(),
+        post : "{{ post.id }}",
+        csrfmiddlewaretoken: '{{ csrf_token }}' 
+      },
+      success: function (response) {
+        location.reload()
+      }
+    });
+    
+  });
+
     </script>
     
 </body>

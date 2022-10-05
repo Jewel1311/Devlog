@@ -56,7 +56,7 @@
                 {% if post.user == user %}<span class="px-1"> <a href="{% url 'view_likes' post.pk %}" class="text-decoration-none">View likes </a></span> {% endif %}
             </span>
             <span class="mx-2">
-                <a href="#" class=" btn btn-link text-decoration-none text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Comments">
+                <a href="#commentsection" class=" btn btn-link text-decoration-none text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Comments">
                     <span><i class="fa-regular fa-comment commentover p-1 rounded-circle fs-3"></i></span>
                 </a>
                 <span>{{ post.comment_count}}</span>
@@ -77,6 +77,38 @@
 
 
             <div class="mt-5 fs-5">{{ post.body|safe }}</div>
+
+            <div class="mt-5" id="commentsection">
+                <div class="fw-bold fs-5">Comments <span>{{post.comment_count}}</span></div>
+                <form class="mt-3" id="commentform">
+                    {% csrf_token %}
+                    <textarea  id="commentbox" rows="4" class="form-control" placeholder="Add Comment..."></textarea>
+                    <button type="submit" class="btn btn-primary mt-2">Post</button>
+                </form>
+            </div>
+
+                <div>
+                    {% for comment in comments %}
+                    <div class="mt-3 border-top py-2"> 
+                        <a href="{% url 'view_profile' comment.user.pk %}" class="text-decoration-none">
+                            <img src="
+                                {% if comment.user.profile.image %}
+                                    {{ comment.user.profile.image.url }}
+                                {% else %}
+                                    {% static 'images/user.png' %} 
+                                {% endif %}"
+                            class="rounded-circle"
+                            height="30"
+                            loading="lazy"
+                            />
+                            <span class="fw-bold text-black px-1 textover">{{ comment.user.username }}</span>
+                        </a>
+                        <div class="mt-1"> {{comment.date | date }} </div>
+                    </div>
+                        <div class="mt-1 ">{{ comment.body }}</div>
+                    {% endfor %}
+                </div>
+
         </div>
     </div>
     {% if post.user != user %}
@@ -124,7 +156,12 @@
             </div>
         </div>
     {% endif %}
+
+
+
+
 </div>
+
 
 
 

@@ -2,9 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from requests import request
-
-from core.models import Posts, Profile
+from core.models import Comments, Comments, Posts, Profile
 from core.validators import tag_validation,validate_image
 
 
