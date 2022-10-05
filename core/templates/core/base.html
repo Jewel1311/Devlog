@@ -34,6 +34,9 @@
         myInput.focus()
         })
 
+        var commentid = null
+        var mention = null 
+
 $( "button" ).click(function(e) {
         var id = $(this).attr('id')
 
@@ -131,6 +134,36 @@ $( "button" ).click(function(e) {
                 },
             })
         }
+
+        // reply button
+        else if(id == "replybtn"){
+            commentid = $(this).attr('value')
+            mention_name = $('#mention'+ commentid).attr('value')
+            mention = $('#mentionid'+ commentid).attr('value')
+            $('#staticBackdropLabel').text("Reply to @" + mention_name)
+            
+        }
+
+        // reply submit
+        else if(id == "replysmbt"){
+            postid = $('#getpostid').attr('value')
+            $.ajax({
+                type: "post",
+                url : "{% url 'reply_comment' %}",
+                data: {
+                    comment : $('#replybox').val(),
+                    commentid : commentid,
+                    mention : mention,
+                    postid : postid,
+                    csrfmiddlewaretoken : '{{ csrf_token }}' 
+                    
+                },
+                success: function(response){
+                    location.reload()
+                },
+            })
+        }
+           
 
 
 })

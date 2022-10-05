@@ -95,3 +95,10 @@ class Comments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField()
     body = models.TextField(default="")
+
+class Replies(models.Model):
+    comment = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name="rcomment")
+    mention = models.ForeignKey(User, on_delete=models.CASCADE, related_name ="to_mention")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField()
+    body = models.TextField(default="")

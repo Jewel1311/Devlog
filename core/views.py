@@ -7,7 +7,7 @@ from django.contrib import messages
 from core.utils import delete_tags, get_is_liked, get_read_time, save_tags, get_is_saved
 from . import decorators
 from django.contrib.auth.decorators import login_required
-from . models import Comments, Posts, Profile, Tags
+from . models import Comments, Posts, Profile, Replies, Tags
 from django.contrib.auth.models import User
 from django.db.models import Q
 
@@ -480,7 +480,7 @@ def add_comment(request):
     if request.method == "POST":
         postid = request.POST.get('post')
         body = request.POST.get('comment')
-        if body is not "":
+        if body != "":
             post = Posts.objects.get(pk = postid)
             comment  = Comments()
 
@@ -495,4 +495,30 @@ def add_comment(request):
             comment.save()
     return HttpResponse()
 
-        
+@login_required
+def reply_comment(request):
+    if request.method == "POST":
+        commentid = request.POST.get('commentid')
+        mention = request.POST.get('mention')
+        body = request.POST.get('comment')
+        postid = request.POST.get('postid')
+
+
+        if body !=  "":
+            parent = Comments.objects.get(pk = commentid)
+            to = User.objects.get(pk = mention)
+            post = Posts.objects.get(pk = postid)
+
+            reply = Replies()
+
+            reply.user = request.user
+            reply.mention = to
+            reply.date = datetime.now()
+            reply.body = body
+            reply.comment = parent
+
+            post.comment_count += 1
+            post.save()
+            reply.save()
+
+    return HttpResponse()
