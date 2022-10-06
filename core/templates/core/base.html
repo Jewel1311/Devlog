@@ -27,13 +27,7 @@
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
         const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
-        var myModal = document.getElementById('exampleModal')
-        var myInput = document.getElementById('myInput')
-
-        myModal.addEventListener('shown.bs.modal', function () {
-        myInput.focus()
-        })
-
+        
         var commentid = null
         var mention = null 
 
@@ -59,6 +53,7 @@ $( "button" ).click(function(e) {
                     }
                    
                 },
+
             })
         }  
         
@@ -78,6 +73,7 @@ $( "button" ).click(function(e) {
                     else if(response.inc ===  false){
                         $('#sicon' + postid).removeClass('setblue')
                     }
+
                    
                 },
             })
@@ -183,6 +179,14 @@ $("#commentform").submit(function (event) {
     });
     
   });
+
+
+         var myModal = document.getElementById('exampleModal')
+        var myInput = document.getElementById('myInput')
+
+        myModal.addEventListener('shown.bs.modal', function () {
+        myInput.focus()
+        })
 
     </script>
     
