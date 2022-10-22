@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
 from core.forms import PostEditForm, PostForm, ProfileForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
 from django.contrib.auth import login, authenticate
@@ -91,27 +91,30 @@ def myposts(request,pk):
     return render(request, 'core/posts.html',context)
 
 def read_post(request, slug):
-    post = Posts.objects.get(slug = slug)
-    comments = Comments.objects.filter(post = post)
-    profile = Profile.objects.get(user = post.user)
-    is_liked = False
-    is_saved = False
-    is_following = False
-    if request.user in post.likes.all():
-        is_liked = True
-    if request.user in post.saved.all():
-        is_saved = True
-    if request.user in profile.connections.all():
-        is_following = True
-    context = {
-        'post':post,
-        'is_liked':is_liked,
-        'is_saved':is_saved,
-        'is_following':is_following,
-        'comments':comments
-        
-    }
-    return render(request, 'core/readpost.html',context)
+    try:
+        post = Posts.objects.get(slug = slug)
+        comments = Comments.objects.filter(post = post)
+        profile = Profile.objects.get(user = post.user)
+        is_liked = False
+        is_saved = False
+        is_following = False
+        if request.user in post.likes.all():
+            is_liked = True
+        if request.user in post.saved.all():
+            is_saved = True
+        if request.user in profile.connections.all():
+            is_following = True
+        context = {
+            'post':post,
+            'is_liked':is_liked,
+            'is_saved':is_saved,
+            'is_following':is_following,
+            'comments':comments
+            
+        }
+        return render(request, 'core/readpost.html',context)
+    except:
+        return HttpResponseNotFound('<h2>Page not found</h2>')
 
 
 @decorators.check_loggedin
@@ -231,19 +234,22 @@ def blogger_profile(request):
     return render(request, 'core/profile.html',context)
 
 def view_profile(request,pk):
-    profile = Profile.objects.get(user = pk)
-    blogger = User.objects.get(pk = pk)
-    posts = Posts.objects.filter(user = pk).order_by('-id')[:3]
-    is_following = False
-    if request.user in profile.connections.all():
-        is_following = True
-    context={
-        'blogger':blogger,
-        'profile':profile,
-        'posts':posts,
-        'is_following':is_following
-        } 
-    return render(request, 'core/profile.html',context)
+    try:
+        profile = Profile.objects.get(user = pk)
+        blogger = User.objects.get(pk = pk)
+        posts = Posts.objects.filter(user = pk).order_by('-id')[:3]
+        is_following = False
+        if request.user in profile.connections.all():
+            is_following = True
+        context={
+            'blogger':blogger,
+            'profile':profile,
+            'posts':posts,
+            'is_following':is_following
+            } 
+        return render(request, 'core/profile.html',context)
+    except:
+        return HttpResponseNotFound('<h2>Page not found</h2>')
 
 @login_required
 def edit_profile(request):
@@ -269,35 +275,38 @@ def edit_profile(request):
         }
         return render(request, 'core/editprofile.html',context)
 
-@login_required
 def post_likes(request):
-    pk = request.GET.get("postid")
-    post = Posts.objects.get(pk = pk)
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
-        post.like_count -=1
-        inc = False
-    else:
-        post.likes.add(request.user)
-        post.like_count +=1
-        inc = True
-    post.save()
-    return JsonResponse({'count':post.like_count, 'inc':inc})
+    if request.user.is_authenticated:
+        pk = request.GET.get("postid")
+        post = Posts.objects.get(pk = pk)
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+            post.like_count -=1
+            inc = False
+        else:
+            post.likes.add(request.user)
+            post.like_count +=1
+            inc = True
+        post.save()
+        return JsonResponse({'count':post.like_count, 'inc':inc,'authenticated':True})
 
-@login_required
+    return JsonResponse({'authenticated':False})
+
 def post_bookmark(request):
-    pk = request.GET.get("postid")
-    post = Posts.objects.get(pk = pk)
-    if request.user in post.saved.all():
-        post.saved.remove(request.user)
-        post.save_count -=1
-        inc = False
-    else:
-        post.saved.add(request.user)
-        post.save_count +=1
-        inc = True
-    post.save()
-    return JsonResponse({'inc':inc})
+    if request.user.is_authenticated:
+        pk = request.GET.get("postid")
+        post = Posts.objects.get(pk = pk)
+        if request.user in post.saved.all():
+            post.saved.remove(request.user)
+            post.save_count -=1
+            inc = False
+        else:
+            post.saved.add(request.user)
+            post.save_count +=1
+            inc = True
+        post.save()
+        return JsonResponse({'inc':inc,'authenticated':True})
+    return JsonResponse({'authenticated':False})
 
 @login_required
 def view_bookmarked(request):

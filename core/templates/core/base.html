@@ -31,6 +31,7 @@
         var commentid = null
         var mention = null 
 
+
 $( "button" ).click(function(e) {
         var id = $(this).attr('id')
 
@@ -44,14 +45,20 @@ $( "button" ).click(function(e) {
                     postid : postid
                 },
                 success: function(response){
-                    $('#likecount' + postid).text(response.count)
-                    if(response.inc ===  true){
-                        $('#hicon' + postid).addClass('setred')
+                    if(response.authenticated === false) {
+                        //if user not authenticated redirect to login
+                        window.location.href = "{% url 'login_view' %}"
                     }
-                    else if(response.inc ===  false){
-                        $('#hicon' + postid).removeClass('setred')
+                    //if user is loggedin
+                    else {
+                        $('#likecount' + postid).text(response.count)
+                        if(response.inc ===  true){
+                            $('#hicon' + postid).addClass('setred')
+                        }
+                        else if(response.inc ===  false){
+                            $('#hicon' + postid).removeClass('setred')
+                        }
                     }
-                   
                 },
 
             })
@@ -67,13 +74,17 @@ $( "button" ).click(function(e) {
                     postid : postid
                 },
                 success: function(response){
-                    if(response.inc ===  true){
-                        $('#sicon' + postid).addClass('setblue')
+                    if(response.authenticated === false) {
+                        window.location.href = "{% url 'login_view' %}"
                     }
-                    else if(response.inc ===  false){
-                        $('#sicon' + postid).removeClass('setblue')
+                    else{
+                        if(response.inc ===  true){
+                            $('#sicon' + postid).addClass('setblue')
+                        }
+                        else if(response.inc ===  false){
+                            $('#sicon' + postid).removeClass('setblue')
+                        }
                     }
-
                    
                 },
             })
@@ -102,7 +113,7 @@ $( "button" ).click(function(e) {
                     }
                    
                 },
-            })
+            })  
         }
         
         //tag followers

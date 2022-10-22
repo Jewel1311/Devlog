@@ -32,7 +32,7 @@
             {% for tag in tags %}
                 <div class="row py-3"> 
 
-                   <div class="col-lg-8"><a href="#" class="text-decoration-none text-primary textover"><span class="fw-bold"> {{ tag.name|truncatechars:27 }}</span></a>
+                   <div class="col-lg-8"><a href="{% url 'tag_detail' tag.slug %}" class="text-decoration-none text-primary textover"><span class="fw-bold"> {{ tag.name|truncatechars:27 }}</span></a>
                     </div>
 
                     <div class="col-lg-4"><span class="fw-bold p-1 rounded bg-primary bg-opacity-25 text-primary">{{ tag.count|stringformat:"02d" }} </span><span class="fw-bold m-1"> Posts</span>
