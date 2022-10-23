@@ -1,6 +1,6 @@
 import re
 import readtime
-from . models import Tags, Posts
+from . models import Tags
 
 def extract_tags(tag):
     tag_set = set(re.findall(r"(\#\w+)", tag))

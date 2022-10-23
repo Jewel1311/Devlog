@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from core.forms import PostEditForm, PostForm, ProfileForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
@@ -10,8 +11,8 @@ from django.contrib.auth.decorators import login_required
 from . models import Comments, Posts, Profile, Replies, Tags
 from django.contrib.auth.models import User
 from django.db.models import Q
-
-
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 #show recent posts, main home
@@ -531,3 +532,8 @@ def reply_comment(request):
             reply.save()
 
     return HttpResponse()
+
+class PasswordChangeView(SuccessMessageMixin,PasswordChangeView):
+   template_name = 'core/changepass.html'
+   success_message = "Password Changed"
+   success_url = reverse_lazy('change-password')

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'ckeditor',
     'django_cleanup.apps.CleanupConfig',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -140,8 +141,7 @@ MEDIA_URL = '/media/'
 CKEDITOR_UPLOAD_PATH = "posts/"
 CKEDITOR_RESTRICT_BY_USER = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 STATIC_URL = 'static/'
 

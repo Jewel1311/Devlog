@@ -31,22 +31,7 @@ urlpatterns = [
     path('delete_post/<int:pk>/',views.delete_post, name='delete_post'),
     path('add_comment/',views.add_comment, name='add_comment'),
     path('reply_comment/',views.reply_comment, name='reply_comment'),
-
-
-
-
-
-   
-
-
-
-
-
-
-
-
-
-
+    path('change-password/', views.PasswordChangeView.as_view(),name='change-password'),
 
 ]
 
