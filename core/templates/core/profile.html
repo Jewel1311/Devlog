@@ -11,7 +11,7 @@
 
                 <img src="{% if profile.image %}{{ profile.image.url}}{% else %}{% static 'images/user.png' %}{% endif %}"
                   class="img-fluid img-thumbnail mt-4 mb-2"
-                  style="width: 150px; z-index: 1">
+                  style="width: 150px; min-height: 150px; z-index: 1">
                 
                 {% if user == blogger  %}
                   <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary" data-mdb-ripple-color="primary"

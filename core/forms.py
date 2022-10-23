@@ -57,7 +57,7 @@ class PostEditForm(forms.ModelForm):
         fields = ['title','body','coverimage']
 
 class ProfileForm(forms.ModelForm):
-    image = forms.ImageField(label="",validators=[validate_image],widget=forms.FileInput(attrs={'class':"form-control my-1",'id':"photoid"}),required=False)
+    image = forms.ImageField(label="",validators=[validate_image],widget=forms.FileInput(attrs={'class':"form-control my-1",'id':"photoid",'onchange':"showimg(event)"}),required=False)
     education = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=False)
     work = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=False)
     location = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control fw-bold'}),required=False)
