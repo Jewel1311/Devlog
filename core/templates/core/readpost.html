@@ -14,9 +14,15 @@
                     </a>
                     
                 {% else %}
-                <a href="" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Report Post">
-                    <i class="fa-solid fa-circle-exclamation fs-5 text-danger"></i>
-                </a>
+                <div class="dropdown">
+                    <a class="text-black" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </a>
+                  
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Report</a></li>
+                    </ul>
+                  </div>
                 {% endif %}
             </div>
             <div class="card-header">
@@ -53,7 +59,7 @@
                     <span class="fs-4"><i id="hicon{{post.id}}" class="fa-solid fa-heart text-secondary likeover rounded-circle p-1 {% if is_liked %} setred {% endif %}"></i></span>
                 </button>
                 <span id="likecount{{post.id}}">{{ post.like_count}}</span>
-                {% if post.user == user %}<span class="px-1"> <a href="{% url 'view_likes' post.pk %}" class="text-decoration-none">View likes </a></span> {% endif %}
+                <span class="px-1"> <a href="{% url 'view_likes' post.pk %}" class="text-decoration-none">View likes </a></span>
             </span>
             <span class="mx-2">
                 <a href="#commentsection" class=" btn btn-link text-decoration-none text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Comments">

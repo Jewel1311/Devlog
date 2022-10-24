@@ -68,7 +68,6 @@ def myfeed(request):
   
     for post in posts_id:
         posts.append(Posts.objects.get(pk = post))
-
     is_liked = get_is_liked(posts,request.user)
     is_saved = get_is_saved(posts,request.user)
     context = {
