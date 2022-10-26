@@ -16,6 +16,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 
 
 #show recent posts, main home
+@decorators.restrict_superuser
 def home(request):
     posts = Posts.get_recent_posts()
     popular = Posts.get_top_posts()[:5]
@@ -30,6 +31,7 @@ def home(request):
     return render(request, 'core/posts.html',context)
 
 
+@decorators.restrict_superuser
 def top_posts(request):
     posts = Posts.get_top_posts()
     popular_tag = Tags.objects.order_by('-count')[0]  #get the tag with high count
@@ -45,8 +47,10 @@ def top_posts(request):
     }
     return render(request, 'core/posts.html',context)
 
+
 #blogger home
 @login_required
+@decorators.restrict_superuser
 def myfeed(request):
     popular = Posts.get_top_posts()[:5]
     posts = []
@@ -78,6 +82,7 @@ def myfeed(request):
     }
     return render(request,'core/posts.html',context)
 
+@decorators.restrict_superuser
 def myposts(request,pk):
     posts = Posts.objects.filter(user = pk ,active=True).order_by('-id')
     is_liked = get_is_liked(posts,request.user)
@@ -90,6 +95,7 @@ def myposts(request,pk):
     }
     return render(request, 'core/posts.html',context)
 
+@decorators.restrict_superuser
 def read_post(request, slug):
     try:
         post = Posts.objects.get(slug = slug)
@@ -118,6 +124,7 @@ def read_post(request, slug):
 
 
 @decorators.check_loggedin
+@decorators.restrict_superuser
 def register(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
@@ -132,6 +139,7 @@ def register(request):
 
 
 @decorators.check_loggedin
+@decorators.restrict_superuser
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -150,6 +158,7 @@ def login_view(request):
     return render(request, 'core/login.html',{'form':form})
     
 @login_required
+@decorators.restrict_superuser
 def write_post(request):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
@@ -188,6 +197,7 @@ def write_post(request):
 
 
 @login_required
+@decorators.restrict_superuser
 def edit_post(request, pk):
     post = Posts.objects.get(pk = pk)
 
@@ -222,6 +232,7 @@ def edit_post(request, pk):
 
 
 @login_required  
+@decorators.restrict_superuser
 def blogger_profile(request):
     profile = Profile.objects.get(user = request.user)
     blogger = request.user
@@ -233,6 +244,7 @@ def blogger_profile(request):
         } 
     return render(request, 'core/profile.html',context)
 
+@decorators.restrict_superuser
 def view_profile(request,pk):
     try:
         profile = Profile.objects.get(user = pk)
@@ -252,6 +264,7 @@ def view_profile(request,pk):
         return HttpResponseNotFound('<h2>Page not found</h2>')
 
 @login_required
+@decorators.restrict_superuser
 def edit_profile(request):
     if request.method == "POST":
         uform = UserForm(request.POST, instance=request.user)
@@ -275,6 +288,7 @@ def edit_profile(request):
         }
         return render(request, 'core/editprofile.html',context)
 
+@decorators.restrict_superuser
 def post_likes(request):
     if request.user.is_authenticated:
         pk = request.GET.get("postid")
@@ -292,6 +306,7 @@ def post_likes(request):
 
     return JsonResponse({'authenticated':False})
 
+@decorators.restrict_superuser
 def post_bookmark(request):
     if request.user.is_authenticated:
         pk = request.GET.get("postid")
@@ -309,6 +324,7 @@ def post_bookmark(request):
     return JsonResponse({'authenticated':False})
 
 @login_required
+@decorators.restrict_superuser
 def view_bookmarked(request):
     posts = Posts.objects.filter(saved = request.user, active = True).order_by('-id')
     is_liked = get_is_liked(posts,request.user)
@@ -322,6 +338,7 @@ def view_bookmarked(request):
     return render(request, 'core/posts.html',context)
 
 @login_required
+@decorators.restrict_superuser
 def view_likes(request,pk):
     post = Posts.objects.get(pk=pk)
     context = {
@@ -330,6 +347,7 @@ def view_likes(request,pk):
     return render(request, 'core/peopleview.html',context)
 
 @login_required
+@decorators.restrict_superuser
 def followers(request):
     user = request.GET.get('userid')
     profile1 = Profile.objects.get(user = user)
@@ -350,7 +368,7 @@ def followers(request):
         profile2.save()
         return JsonResponse({'fc':profile1.followers_count,'add':add})
 
-
+@decorators.restrict_superuser
 def view_followers(request, pk):
     profile = Profile.objects.get(user = pk)
     context = {
@@ -359,7 +377,7 @@ def view_followers(request, pk):
     }
     return render(request, 'core/peopleview.html', context)
 
-
+@decorators.restrict_superuser
 def view_following(request, pk):
     usr = User.objects.get(pk = pk)
     tags = request.user.tagfollower.all()
@@ -371,6 +389,7 @@ def view_following(request, pk):
     }
     return render(request, 'core/peopleview.html', context)
 
+@decorators.restrict_superuser
 def search_posts(request):
     if request.method == 'POST':
         form = SearchForm(request.POST)
@@ -394,6 +413,7 @@ def search_posts(request):
         }
         return render(request, 'core/search.html',context)
 
+@decorators.restrict_superuser
 def search_people(request):
     if request.method == 'POST':
         form = SearchForm(request.POST)
@@ -413,6 +433,7 @@ def search_people(request):
         }
         return render(request, 'core/search.html',context)
 
+@decorators.restrict_superuser
 def search_tags(request):
     if request.method == 'POST':
         form = SearchForm(request.POST)
@@ -432,6 +453,7 @@ def search_tags(request):
         }
         return render(request, 'core/search.html',context)
 
+@decorators.restrict_superuser
 def tag_detail(request, slug):
     tag = Tags.objects.get(slug = slug)
     posts = []
@@ -455,6 +477,7 @@ def tag_detail(request, slug):
     return render(request, 'core/tags.html', context)
 
 @login_required
+@decorators.restrict_superuser
 def tag_follow(request):
     tagid = request.GET.get('tagid')
     tag = Tags.objects.get(pk = tagid)
@@ -474,6 +497,7 @@ def tag_follow(request):
     return JsonResponse({'fc':tag.follower_count,'add':add})
 
 @login_required
+@decorators.restrict_superuser
 def delete_post(request, pk):
     post = Posts.objects.get(pk = pk)
     delete_tags(post.tags.all())
@@ -485,6 +509,7 @@ def delete_post(request, pk):
     return redirect('home')
 
 @login_required
+@decorators.restrict_superuser
 def add_comment(request):
     if request.method == "POST":
         postid = request.POST.get('post')
@@ -505,6 +530,7 @@ def add_comment(request):
     return HttpResponse()
 
 @login_required
+@decorators.restrict_superuser
 def reply_comment(request):
     if request.method == "POST":
         commentid = request.POST.get('commentid')
