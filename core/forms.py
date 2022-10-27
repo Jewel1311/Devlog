@@ -89,3 +89,20 @@ class SearchForm(forms.Form):
         'class':'form-control rounded',
         'placeholder':'Search'
     }))
+
+REPORT_CHOICES =  (
+    ('Rude or vulgar','Rude or vulgar'),
+    ('Harassment or hate speech','Harassment or hate speech'),
+    ('Spam or copyright issue','Spam or copyright issue'),
+    ('others','others')
+)
+class ReportPostForm(forms.Form):
+    choices = forms.CharField(label="", widget=forms.RadioSelect(choices=REPORT_CHOICES, attrs={
+        'class':'fs-5 list-unstyled'
+    }))
+    message = forms.CharField(widget=forms.Textarea(attrs={
+        'class':'form-control',
+        'rows':3,
+        'placeholder':'Messages if any'
+        }),required=False)
+    

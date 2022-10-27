@@ -1,3 +1,4 @@
+from email.policy import default
 from unicodedata import category
 from django.db import models
 from django.contrib.auth.models import User
@@ -103,15 +104,10 @@ class Replies(models.Model):
     date = models.DateTimeField()
     body = models.TextField(default="")
 
-
-class ReportCategory(models.Model):
-    category = models.CharField(max_length = 100)
-
-    def __str__(self):
-        return self.category
-
-class PostReport(models.Model):
+class PostReports(models.Model):
     post = models.ForeignKey(Posts, on_delete = models.CASCADE)
-    category = models.ForeignKey(ReportCategory, on_delete = models.CASCADE)
+    category = models.CharField(max_length = 100)
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     description = models.TextField(blank = True)
+    date = models.DateTimeField()
+

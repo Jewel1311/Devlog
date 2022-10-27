@@ -1,8 +1,9 @@
 from datetime import datetime
+from cv2 import log
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from core.forms import PostEditForm, PostForm, ProfileForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
+from core.forms import PostEditForm, PostForm, ProfileForm, ReportPostForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from core.utils import delete_tags, get_is_liked, get_read_time, save_tags, get_is_saved
@@ -34,8 +35,12 @@ def home(request):
 @decorators.restrict_superuser
 def top_posts(request):
     posts = Posts.get_top_posts()
-    popular_tag = Tags.objects.order_by('-count')[0]  #get the tag with high count
-    popular = Posts.get_tag_post(popular_tag.id)[:5]
+    try:
+        popular_tag = Tags.objects.order_by('-count')[0]  #get the tag with high count
+        popular = Posts.get_tag_post(popular_tag.id)[:5]
+    except:
+        popular_tag = None
+        popular = None
     is_liked = get_is_liked(posts,request.user)
     is_saved = get_is_saved(posts,request.user)
     context = {
@@ -562,3 +567,16 @@ class PasswordChangeView(SuccessMessageMixin,PasswordChangeView):
    template_name = 'core/changepass.html'
    success_message = "Password Changed"
    success_url = reverse_lazy('change-password')
+
+
+@login_required
+@decorators.restrict_superuser
+def report_post(request):
+    if request.method == "POST":
+        pass
+    else:
+        form = ReportPostForm()
+        context = {
+            'form':form
+        }
+        return render(request, 'core/postreport.html',context)
