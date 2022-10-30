@@ -199,7 +199,13 @@ $("#commentform").submit(function (event) {
         myInput.focus()
         })
 
-    </script>
+
+function showimg(event) {
+    document.getElementById('previewimg').src = URL.createObjectURL(event.target.files[0])
+  }
+
+  
+</script>
     
 </body>
 </html>

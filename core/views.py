@@ -1,6 +1,6 @@
 from datetime import datetime
 from cv2 import log
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from core.forms import PostEditForm, PostForm, ProfileForm, ReportPostForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
@@ -558,7 +558,9 @@ def reply_comment(request):
             reply.comment = parent
 
             post.comment_count += 1
+            parent.reply_count += 1
             post.save()
+            parent.save()
             reply.save()
 
     return HttpResponse()
@@ -580,3 +582,30 @@ def report_post(request):
             'form':form
         }
         return render(request, 'core/postreport.html',context)
+
+
+@login_required
+@decorators.restrict_superuser
+def delete_comment(request, pk):
+    try:
+        comment = Comments.objects.get(pk = pk)
+        post = Posts.objects.get(pk = comment.post.id )
+        post.comment_count -= (1 + comment.reply_count)
+        post.save()
+        comment.delete()
+        return redirect('read_post', slug=post.slug)
+    except:
+        return HttpResponseNotFound('<h2>Comment not found</h2>')
+
+@login_required
+@decorators.restrict_superuser
+def delete_reply(request, pk):
+    try:
+        reply = Replies.objects.get(pk = pk)
+        post = Posts.objects.get(pk = reply.comment.post.id )
+        post.comment_count -= 1
+        post.save()
+        reply.delete()
+        return redirect('read_post', slug=post.slug)
+    except:
+        return HttpResponseNotFound('<h2>Comment not found</h2>')

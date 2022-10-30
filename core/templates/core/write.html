@@ -14,7 +14,6 @@
             {% csrf_token %}
             {{ form.as_p }}
             {{ form.media }}
-
             {% if tag_names %}
             <label>Tags</label>
                 <input type="text" name="hashtags" class="form-control mb-3" placeholder="maximum 3 tags  (eg:#devlog)"

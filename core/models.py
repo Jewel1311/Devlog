@@ -96,6 +96,7 @@ class Comments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField()
     body = models.TextField(default="")
+    reply_count = models.IntegerField(default=0)
 
 class Replies(models.Model):
     comment = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name="rcomment")
@@ -110,4 +111,5 @@ class PostReports(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     description = models.TextField(blank = True)
     date = models.DateTimeField()
+
 
