@@ -3,10 +3,17 @@
 <div class="d-flex justify-content-center">
     <div class="col-md-9 shadow p-3 rounded">
         <h2 class="fw-bold">Report Abuse</h2>
+        <div>{{post.title}}</div>
         <form method="POST">
             {% csrf_token %}
             <div class="mt-5">{{ form.choices }}</div>
             <div class="mt-5">{{ form.message }}</div>
+            <div class="text-center my-3">
+                <button type="submit" class="btn btn-primary">
+                    Report
+                </button>
+            </div>
+            
         </form>
     </div>
 </div>

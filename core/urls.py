@@ -32,7 +32,7 @@ urlpatterns = [
     path('add_comment/',views.add_comment, name='add_comment'),
     path('reply_comment/',views.reply_comment, name='reply_comment'),
     path('change-password/', views.PasswordChangeView.as_view(),name='change-password'),
-    path('report_post/',views.report_post, name='report_post'),
+    path('report_post/<int:pk>/',views.report_post, name='report_post'),
     path('delete_comment/<int:pk>/',views.delete_comment, name='delete_comment'),
     path('delete_reply/<int:pk>/',views.delete_reply, name='delete_reply'),
 ]

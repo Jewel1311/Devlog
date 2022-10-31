@@ -3,6 +3,11 @@
 {% block contents %}
 <div class="row">
     <div class="col-lg-9 ">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{message.tags}} p-2 m-1 text-center"> {{ message }} </div>
+            {%endfor %}
+        {% endif %}
         <div class="bg-white shadow rounded mx-4 p-2">
             <div class="d-flex justify-content-end">
                 {% if post.user == user%}
@@ -20,7 +25,7 @@
                     </a>
                   
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{% url 'report_post' %}">Report</a></li>
+                      <li><a class="dropdown-item" href="{% url 'report_post' post.pk %}">Report</a></li>
                     </ul>
                   </div>
                 {% endif %}

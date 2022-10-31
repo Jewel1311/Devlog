@@ -1,6 +1,5 @@
 from datetime import datetime
-from cv2 import log
-from django.http import Http404, HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import  HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from core.forms import PostEditForm, PostForm, ProfileForm, ReportPostForm, SearchForm, UserForm, UserRegistrationForm, LoginForm
@@ -9,7 +8,7 @@ from django.contrib import messages
 from core.utils import delete_tags, get_is_liked, get_read_time, save_tags, get_is_saved
 from . import decorators
 from django.contrib.auth.decorators import login_required
-from . models import Comments, Posts, Profile, Replies, Tags
+from . models import Comments, PostReports, Posts, Profile, Replies, Tags
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib.auth.views import PasswordChangeView
@@ -573,15 +572,39 @@ class PasswordChangeView(SuccessMessageMixin,PasswordChangeView):
 
 @login_required
 @decorators.restrict_superuser
-def report_post(request):
+def report_post(request, pk):
+    try:
+        post = Posts.objects.get(id = pk)
+    except:
+        return HttpResponseNotFound('<h2>Post not found</h2>')
     if request.method == "POST":
-        pass
+        form = ReportPostForm(request.POST)
+        if form.is_valid():
+            try:
+                report = PostReports.objects.get(user = request.user, post = post)
+                if report:
+                    messages.warning(request,'You have already reported this post')
+                    return redirect('read_post', slug=post.slug)  
+            except:  
+                report = PostReports()
+                report.category = form.cleaned_data['choices']
+                report.post = post
+                report.user = request.user
+                report.date = datetime.now()
+                if form.cleaned_data['message'] != "":
+                    report.description = form.cleaned_data['message']
+                report.save()
+                messages.success(request,'Post Reported')
+                return redirect('read_post', slug=post.slug)             
     else:
         form = ReportPostForm()
         context = {
-            'form':form
+            'form':form,
+            'post':post
         }
         return render(request, 'core/postreport.html',context)
+    
+
 
 
 @login_required
