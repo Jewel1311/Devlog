@@ -1,0 +1,133 @@
+{% extends "core/base.html" %}
+{% load static%}
+{% block body %}
+
+
+<!--Main Navigation-->
+<header>
+  <!-- Sidebar -->
+  {% with url_name=request.resolver_match.url_name %}
+  <nav 
+       id="sidebarMenu"
+       class="collapse d-lg-block sidebar shadow collapse bg-white"
+       >
+    <div class="position-sticky">
+      <!-- Search form -->
+      
+      <div class="list-group list-group-flush mx-3 ">
+        <a
+           href="{% url 'search_posts' %}"
+           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'search_posts' or url_name == 'search_people' or url_name == 'search_tags'  %} text-primary {% endif %}"
+           aria-current="true"
+           >
+           <i class="fa-solid fa-magnifying-glass fa-fw me-3"></i><span class="fw-bold">Search</span>
+        </a>
+        {% if user.is_authenticated %}
+        <a
+           href="{% url 'write_post' %}"
+           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'write_post' %} text-primary {% endif %}"
+           aria-current="true"
+           >
+           <i class="fa-sharp fa-solid fa-pen fa-fw me-3"></i><span class="fw-bold">Write</span>
+        </a>
+        <a
+           href="{% url 'myfeed' %}"
+           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'myfeed' %} text-primary {% endif %}"
+           >
+           <i class="fa-solid fa-bars-staggered fa-fw me-3"></i><span class ="fw-bold">My Feed</span>
+        </a>
+        <a
+           href="{% url 'home' %}"
+           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'home' %} text-primary {% endif %}"
+           >
+           <i class="fa-regular fa-compass fa-fw me-3"></i></i><span class ="fw-bold">Explore</span>
+        </a>
+        
+        <a
+        href="{% url 'view_bookmarked' %}"
+        class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'view_bookmarked' %} text-primary {% endif %}"
+        >
+        <i class="fa-solid fa-bookmark fa-fw me-3"></i><span class ="fw-bold">Bookmarked</span>
+      </a>
+
+        {% else %}
+          <div class="mt-5 mx-1 rounded text-center fs-5 p-2 py-5 border">
+            <p>Join the community and stay upto date</p>
+            <a href="{% url 'register' %}" class="text-decoration-none btn btn-primary text-white
+            p-2 fw-bold rounded">Get Started</a>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </nav>
+  <!-- Sidebar -->
+
+  <!-- Navbar -->
+  <nav
+       id="main-navbar"
+       class="navbar navbar-expand-lg navbar-light bg-white navcolor fixed-top" 
+       >
+    <!-- Container wrapper -->
+    <div class="container-fluid">
+      <!-- Toggle button -->
+      <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#sidebarMenu"
+              aria-controls="sidebarMenu"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+              >
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Brand -->
+      <a class="navbar-brand mx-2" href="{% if user.is_authenticated %}{% url 'myfeed' %}{% else %} {% url 'home' %}{% endif %}">
+        <div class="fw-bold fs-3">DEV<span class="bg-primary text-white p-1 m-1 rounded">LOG</span></div>
+      </a>
+    
+      <!-- Right links -->
+      
+      <ul class="navbar-nav ms-auto d-flex flex-row ">
+        <!-- Avatar -->
+        <li class="nav-item dropdown mx-3 ">
+          <a
+            class = "nav-link dropdown-toggle hidden-arrow d-flex align-items-center"
+            role="button" 
+            id="dropdownMenuLink" 
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+             >
+            Admin
+          </a>
+          <ul 
+              class="dropdown-menu dropdown-menu-end "
+              id="dropdownMenuLink"
+              >
+            <li><a class="dropdown-item" href="{% url 'blogger_profile' %}">My profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'myposts' user.pk %}">My posts</a></li>
+            <li><a class="dropdown-item" href="{% url 'change-password' %}">Change password</a></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
+</header>
+<!--Main Navigation-->
+
+<!--Main layout-->
+<main style="margin-top: 58px">
+  <div class="container-fluid pt-4 pb-2">
+      {% block contents %} {% endblock contents %}
+
+    </div>
+</main>
+<!--Main layout-->
+{% endwith %}
+{% endblock body %}

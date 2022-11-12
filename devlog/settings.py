@@ -27,7 +27,6 @@ SECRET_KEY = 'django-insecure-)*2c-7g+u-(z3)*_qb^4@l#qhy#e%t*u@kg2lw9+x=($r34uuh
 DEBUG = True
 
 ALLOWED_HOSTS = [
-   
 ]
 
 
@@ -40,11 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+ 
     'core.apps.CoreConfig',
+    'devlog_admin',
     'ckeditor',
     'django_cleanup.apps.CleanupConfig',
-    'crispy_forms'
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -155,4 +155,4 @@ LOGOUT_REDIRECT_URL = 'home'
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'    

@@ -24,6 +24,7 @@ from ckeditor_uploader import views as ckeditor_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('devlog_admin/',include('devlog_admin.urls')),
     path('',include('core.urls')),
     path('register/',core_views.register, name='register'),
     path('login/',core_views.login_view ,name='login_view'),

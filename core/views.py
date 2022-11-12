@@ -16,7 +16,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 
 
 #show recent posts, main home
-@decorators.restrict_superuser
+@decorators.redirect_adminhome
 def home(request):
     posts = Posts.get_recent_posts()
     popular = Posts.get_top_posts()[:5]
@@ -143,7 +143,6 @@ def register(request):
 
 
 @decorators.check_loggedin
-@decorators.restrict_superuser
 def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -153,6 +152,9 @@ def login_view(request):
             user = authenticate(request,username = uname, password = passw )
             if user:
                 login(request,user)
+                if user.is_superuser:
+                    return redirect('admin_dashboard')
+                
                 return redirect('myfeed')
             else:
                 messages.error(request,'Invalid credentials')
