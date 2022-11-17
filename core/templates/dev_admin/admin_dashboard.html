@@ -1,4 +1,5 @@
 {% extends "dev_admin/adminhome.html" %}
+{% load static %}
 {% block contents %}
 <div class="wrapper">
     <div class="row mx-2">
@@ -9,9 +10,9 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1 fw-bold">
                                 Bloggers</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ blogger_count | stringformat:"02d"}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 fw-bold">{{ blogger_count | stringformat:"02d"}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-users fa-2x text-black-50"></i>
@@ -27,9 +28,9 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1 fw-bold">
                                 Posts</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ post_count | stringformat:"02d"}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 fw-bold">{{ post_count | stringformat:"02d"}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-clipboard-list fa-2x text-black-50"></i>
@@ -45,9 +46,9 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tags
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1 fw-bold">Tags
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ tag_count | stringformat:"02d"}}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 fw-bold">{{ tag_count | stringformat:"02d"}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-tags fa-2x text-black-50"></i>
@@ -63,9 +64,9 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                #Trending</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{popular_tag}}</div>
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1 fw-bold">
+                                Trending</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800 fw-bold">{{popular_tag}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-fire fa-2x text-black-50"></i>
@@ -77,5 +78,50 @@
     </div>
 </div>
 
+<div class="row mx-2">
+    <div class="col-xl-7 mb-4">
+        <div class="shadow bg-white p-2 rounded">
+            <div class="p-2 pb-3 fw-bold">TOP BLOGGERS</div>
+            {% for blogger in top_bloggers %}
+                <div class="p-2 border  border border-bottom-0 border border-start-0 border border-end-0 d-flex align-items-center justify-content-between">
+                        <div>
+                            <a href="#" class="text-decoration-none">
+                                <img
+                                    src="{% if blogger.image %}{{blogger.image.url}} {% else %}{% static 'images/user.png' %}{% endif %}"
+                                    class="rounded-circle"
+                                    height="30"
+                                    width="30"
+                                    loading="lazy"
+                                />
+                            </a>
+                            <a href="#" class="px-2 text-decoration-none text-black">
+                                {{blogger.user.username}}
+                            </a>
+                        </div>
+                        <div class="p-1 rounded bg-primary bg-opacity-25 text-primary ">
+                            {{ blogger.followers_count | stringformat:"02d"}} <span> Followers</span>
+                        </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-xl-5 mb-4">
+        <div class="shadow bg-white p-2 rounded">
+            <div class="p-2 pb-3 fw-bold">TOP TAGS</div>
+            {% for tag in top_tags %}
+                <div class="p-2 border  border border-bottom-0 border border-start-0 border border-end-0 d-flex align-items-center justify-content-between">
+                        <div>
+                            <a href="#" class="px-2 text-decoration-none text-black linkover" >
+                                {{tag.name}}
+                            </a>
+                        </div>
+                        <div class="p-1 rounded bg-success bg-opacity-25 text-success ">
+                            {{ tag.count | stringformat:"02d"}} <span> Posts</span>
+                        </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
 {% endblock contents %}

@@ -1,4 +1,4 @@
-from django.http import Http404, HttpResponseNotFound
+from django.http import HttpResponseNotFound
 from django.shortcuts import redirect
 
 def check_loggedin(view_func):
