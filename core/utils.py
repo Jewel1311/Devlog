@@ -12,20 +12,26 @@ def get_read_time(body):
     return result.minutes
 
 
-def save_tags(tags):
+def save_tags(tags, draft):
     tag_list = extract_tags(tags)
     post_tags = [] #list of tag id is created
     for tag in tag_list:
         object = Tags.get_tag(tag) #check if tag is in table
         if object:
             post_tags.append(object)
-            object.count += 1
-            object.save()
+            if draft == False:
+                object.count += 1
+                object.save()
         else:
             t= Tags.objects.create(
                 name = tag,
                 count = 1
             )
+            if draft:
+                object = Tags.get_tag(tag)
+                object.count -= 1
+                object.save()
+
             post_tags.append(t)
     return post_tags
 
@@ -45,6 +51,7 @@ def get_is_saved(posts, user):
 
 def delete_tags(tags):
     for tag in tags:
-        object = Tags.get_tag(tag) 
-        object.count -= 1
+        object = Tags.get_tag(tag)
+        if object.count > 0: 
+            object.count -= 1
         object.save()

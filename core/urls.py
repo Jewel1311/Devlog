@@ -9,6 +9,7 @@ urlpatterns = [
     path('',views.home, name='home'),
     path('top_posts',views.top_posts, name='top_posts'),
     path('write_post',views.write_post, name='write_post'),
+    path('post_drafts',views.view_drafts, name='view_drafts'),
     path('blogger_profile',views.blogger_profile, name='blogger_profile'),
     path('view_profile/<int:pk>/',views.view_profile, name='view_profile'),
     path('edit_profile',views.edit_profile, name='edit_profile'),

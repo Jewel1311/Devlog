@@ -50,6 +50,13 @@
         <i class="fa-solid fa-bookmark fa-fw me-3"></i><span class ="fw-bold">Bookmarked</span>
       </a>
 
+      <a
+        href="{% url 'view_drafts' %}"
+        class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'view_drafts' %} text-primary {% endif %}"
+        >
+        <i class="fa-solid fa-paper-plane fa-fw me-3"></i><span class ="fw-bold">Drafts</span>
+      </a>
+
         {% else %}
           <div class="mt-5 mx-1 rounded text-center fs-5 p-2 py-5 border">
             <p>Join the community and stay upto date</p>

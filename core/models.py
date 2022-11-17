@@ -61,6 +61,7 @@ class Posts(models.Model):
     save_count = models.BigIntegerField(default = 0)
     comment_count = models.BigIntegerField(default = 0)
     slug = AutoSlugField(max_length=200,unique=True,populate_from='title',null=True)
+    draft = models.BooleanField(default=False)
 
 
     def get_absolute_url(self):
@@ -77,15 +78,15 @@ class Posts(models.Model):
 
     @classmethod
     def get_recent_posts(self):
-        return self.objects.filter(active=True).order_by('-id')
+        return self.objects.filter(active=True, draft = False).order_by('-id')
 
     @classmethod
     def get_top_posts(self):
-        return self.objects.filter(active=True).order_by('-like_count')
+        return self.objects.filter(active=True, draft = False).order_by('-like_count')
 
     @classmethod    
     def get_tag_post(self, tag):
-        return self.objects.filter(tags = tag,active=True).order_by('-id')
+        return self.objects.filter(tags = tag, active=True, draft = False).order_by('-id')
 
         
     def __str__(self):

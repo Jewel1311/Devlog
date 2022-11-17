@@ -62,12 +62,12 @@ def myfeed(request):
 
     #find post id of followers
     for people in request.user.followers.all(): #reverse lookup m2m field using related name
-        people_post = Posts.objects.filter(user = people.user, active=True).exclude(user = request.user)
+        people_post = Posts.objects.filter(user = people.user, active=True, draft = False).exclude(user = request.user)
         for post in people_post:
             posts_id.append(post.id)
 
     for tag in  request.user.tagfollower.all():
-        for post in Posts.objects.filter(tags = tag).exclude(user = request.user):        
+        for post in Posts.objects.filter(tags = tag, draft = False).exclude(user = request.user):        
             posts_id.append(post.id)
 
     posts_id = list(set(posts_id)) #for unique id
@@ -88,7 +88,7 @@ def myfeed(request):
 
 @decorators.restrict_superuser
 def myposts(request,pk):
-    posts = Posts.objects.filter(user = pk ,active=True).order_by('-id')
+    posts = Posts.objects.filter(user = pk ,active=True, draft = False).order_by('-id')
     is_liked = get_is_liked(posts,request.user)
     is_saved = get_is_saved(posts,request.user)
     context ={
@@ -169,15 +169,18 @@ def write_post(request):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
+            draft = False
             body = form.cleaned_data['body']
-            tags = form.cleaned_data['tags']
+            tags = request.POST['hashtags']
 
-            post_tags = save_tags(tags)
             post = form.save(False)
-
+            if 'draft' in request.POST:
+                post.draft = True
+                draft = True
             post.date = datetime.now()
             post.user = request.user
             post.readtime = get_read_time(body)
+            post_tags = save_tags(tags, draft)
             post.save()
             post.tags.add(*post_tags) #add tag id's in post
             post.save()
@@ -200,6 +203,16 @@ def write_post(request):
             }
         return render(request, 'core/write.html',context) 
 
+def view_drafts(request):
+    posts = Posts.objects.filter(user = request.user, draft = True)
+    is_liked = get_is_liked(posts,request.user)
+    is_saved = get_is_saved(posts,request.user)
+    context = {
+        'posts': posts,
+        'is_liked':is_liked,
+        'is_saved':is_saved,
+    }
+    return render(request, "core/posts.html",context)
 
 
 @login_required
@@ -211,8 +224,15 @@ def edit_post(request, pk):
         form = PostEditForm(request.POST, request.FILES, instance=post)
         tags = request.POST['hashtags']
         if form.is_valid():
+            draft = False
+            if 'draft' in request.POST:
+                post.draft = True
+                draft = True
+            else:
+                post.draft = False
+            post.save()
             delete_tags(post.tags.all())
-            new_tags = save_tags(tags)
+            new_tags = save_tags(tags,draft)
             post.tags.clear()
             post.tags.add(*new_tags)
             form.save()
@@ -242,7 +262,7 @@ def edit_post(request, pk):
 def blogger_profile(request):
     profile = Profile.objects.get(user = request.user)
     blogger = request.user
-    posts = Posts.objects.filter(user = request.user).order_by('-id')[:3]
+    posts = Posts.objects.filter(user = request.user, draft = False).order_by('-id')[:3]
     context={
         'blogger':blogger,
         'profile':profile,
@@ -255,7 +275,7 @@ def view_profile(request,pk):
     try:
         profile = Profile.objects.get(user = pk)
         blogger = User.objects.get(pk = pk)
-        posts = Posts.objects.filter(user = pk).order_by('-id')[:3]
+        posts = Posts.objects.filter(user = pk, draft = False).order_by('-id')[:3]
         is_following = False
         if request.user in profile.connections.all():
             is_following = True
@@ -298,7 +318,10 @@ def edit_profile(request):
 def post_likes(request):
     if request.user.is_authenticated:
         pk = request.GET.get("postid")
-        post = Posts.objects.get(pk = pk)
+        try:
+            post = Posts.objects.get(pk = pk)
+        except:
+            return HttpResponseNotFound('<h2>400 - Bad request</h2>')
         if request.user in post.likes.all():
             post.likes.remove(request.user)
             post.like_count -=1
@@ -316,7 +339,10 @@ def post_likes(request):
 def post_bookmark(request):
     if request.user.is_authenticated:
         pk = request.GET.get("postid")
-        post = Posts.objects.get(pk = pk)
+        try:
+            post = Posts.objects.get(pk = pk)
+        except:
+            return HttpResponseNotFound('<h2>400 - Bad request</h2>')
         if request.user in post.saved.all():
             post.saved.remove(request.user)
             post.save_count -=1
@@ -332,7 +358,7 @@ def post_bookmark(request):
 @login_required
 @decorators.restrict_superuser
 def view_bookmarked(request):
-    posts = Posts.objects.filter(saved = request.user, active = True).order_by('-id')
+    posts = Posts.objects.filter(saved = request.user, active = True, draft = False).order_by('-id')
     is_liked = get_is_liked(posts,request.user)
     is_saved = get_is_saved(posts,request.user)
     context ={
@@ -346,7 +372,10 @@ def view_bookmarked(request):
 @login_required
 @decorators.restrict_superuser
 def view_likes(request,pk):
-    post = Posts.objects.get(pk=pk)
+    try:
+        post = Posts.objects.get(pk=pk)
+    except:
+        return HttpResponseNotFound('<h2>400 - Bad request</h2>')
     context = {
         'post':post
     }
@@ -356,7 +385,11 @@ def view_likes(request,pk):
 @decorators.restrict_superuser
 def followers(request):
     user = request.GET.get('userid')
-    profile1 = Profile.objects.get(user = user)
+    try:
+        profile1 = Profile.objects.get(user = user)
+    except:
+        return HttpResponseNotFound('<h2>400 - Bad request</h2>')
+    
     profile2 = Profile.objects.get(user = request.user)
     if request.user != user:
         if request.user in profile1.connections.all():
@@ -376,7 +409,11 @@ def followers(request):
 
 @decorators.restrict_superuser
 def view_followers(request, pk):
-    profile = Profile.objects.get(user = pk)
+    try:
+        profile = Profile.objects.get(user = pk)
+    except:
+        return HttpResponseNotFound('<h2>400 - Bad request</h2>')
+    
     context = {
         'profile':profile,
         'peoples':profile.connections.all()
@@ -385,7 +422,10 @@ def view_followers(request, pk):
 
 @decorators.restrict_superuser
 def view_following(request, pk):
-    usr = User.objects.get(pk = pk)
+    try:
+        usr = User.objects.get(pk = pk)
+    except:
+        return HttpResponseNotFound('<h2>400 - Bad request</h2>')
     tags = request.user.tagfollower.all()
     context = {
         'usr':usr,
@@ -401,7 +441,7 @@ def search_posts(request):
         form = SearchForm(request.POST)
         if form.is_valid():
             keyword = form.cleaned_data['search']
-            posts = Posts.objects.filter(title__icontains=keyword , active=True).order_by('-date')
+            posts = Posts.objects.filter(title__icontains=keyword , active=True, draft = False).order_by('-date')
             is_liked = get_is_liked(posts,request.user)
             is_saved = get_is_saved(posts,request.user)
             context = {
@@ -461,10 +501,13 @@ def search_tags(request):
 
 @decorators.restrict_superuser
 def tag_detail(request, slug):
-    tag = Tags.objects.get(slug = slug)
+    try:
+        tag = Tags.objects.get(slug = slug)
+    except:
+        return HttpResponseNotFound('<h2>400 - Bad request</h2>')
     posts = []
     is_following = False
-    all_posts = Posts.objects.filter(active = True).order_by('-id')
+    all_posts = Posts.objects.filter(active = True,  draft = False).order_by('-id')
     for post in all_posts:
         if tag in post.tags.all():
             posts.append(post)
@@ -486,8 +529,11 @@ def tag_detail(request, slug):
 @decorators.restrict_superuser
 def tag_follow(request):
     tagid = request.GET.get('tagid')
-    tag = Tags.objects.get(pk = tagid)
-    profile = Profile.objects.get(user = request.user)
+    try:
+        tag = Tags.objects.get(pk = tagid)
+        profile = Profile.objects.get(user = request.user)
+    except:
+        return HttpResponseNotFound('<h2>400 - Bad request</h2>')
     if request.user in tag.followers.all():
         tag.followers.remove(request.user)
         profile.following_count -= 1
@@ -505,7 +551,10 @@ def tag_follow(request):
 @login_required
 @decorators.restrict_superuser
 def delete_post(request, pk):
-    post = Posts.objects.get(pk = pk)
+    try:
+        post = Posts.objects.get(pk = pk)
+    except:
+        return HttpResponseNotFound('<h2>400 - Bad request</h2>')
     delete_tags(post.tags.all())
     post.tags.clear()
     post.delete()
@@ -521,7 +570,10 @@ def add_comment(request):
         postid = request.POST.get('post')
         body = request.POST.get('comment')
         if body != "":
-            post = Posts.objects.get(pk = postid)
+            try:
+                post = Posts.objects.get(pk = postid)
+            except:
+                return HttpResponseNotFound('<h2>400 - Bad request</h2>')
             comment  = Comments()
 
             comment.body = body
@@ -546,9 +598,12 @@ def reply_comment(request):
 
 
         if body !=  "":
-            parent = Comments.objects.get(pk = commentid)
-            to = User.objects.get(pk = mention)
-            post = Posts.objects.get(pk = postid)
+            try:
+                parent = Comments.objects.get(pk = commentid)
+                to = User.objects.get(pk = mention)
+                post = Posts.objects.get(pk = postid)
+            except:
+                return HttpResponseNotFound('<h2>400 - Bad request</h2>')
 
             reply = Replies()
 
@@ -578,7 +633,7 @@ def report_post(request, pk):
     try:
         post = Posts.objects.get(id = pk)
     except:
-        return HttpResponseNotFound('<h2>Post not found</h2>')
+        return HttpResponseNotFound('<h2>400 - Bad request</h2>')
     if request.method == "POST":
         form = ReportPostForm(request.POST)
         if form.is_valid():
