@@ -23,11 +23,11 @@
            <i class="fa-solid fa-bars-staggered fa-fw me-3"></i><span class="fw-bold">Dashboard</span>
         </a>
         <a
-           href="{% url 'write_post' %}"
-           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'write_post' %} text-primary {% endif %}"
+           href="{% url 'view_bloggers' %}"
+           class="list-group-item list-group-item-action py-4 ripple {% if url_name == 'view_bloggers' %} text-primary {% endif %}"
            aria-current="true"
            >
-           <i class="fa-sharp fa-solid fa-pen fa-fw me-3"></i><span class="fw-bold">Write</span>
+           <i class="fas fa-users fa-fw me-3"></i><span class="fw-bold">Bloggers</span>
         </a>
         <a
            href="{% url 'myfeed' %}"

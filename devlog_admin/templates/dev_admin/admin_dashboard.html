@@ -78,6 +78,13 @@
     </div>
 </div>
 
+
+<div class="row mx-2 mb-4">
+    <div class="col-md-12">
+        <div id="chartContainer" class="shadow" style="height: 370px; width: 100%;"></div>
+    </div>
+</div>
+
 <div class="row mx-2">
     <div class="col-xl-7 mb-4">
         <div class="shadow bg-white p-2 rounded">
@@ -98,7 +105,7 @@
                                 {{blogger.user.username}}
                             </a>
                         </div>
-                        <div class="p-1 rounded bg-primary bg-opacity-25 text-primary ">
+                        <div class="p-1 rounded bg-success bg-opacity-25 text-success ">
                             {{ blogger.followers_count | stringformat:"02d"}} <span> Followers</span>
                         </div>
                 </div>
@@ -115,7 +122,7 @@
                                 {{tag.name}}
                             </a>
                         </div>
-                        <div class="p-1 rounded bg-success bg-opacity-25 text-success ">
+                        <div class="p-1 rounded bg-primary bg-opacity-25 text-primary ">
                             {{ tag.count | stringformat:"02d"}} <span> Posts</span>
                         </div>
                 </div>
@@ -124,4 +131,45 @@
     </div>
 </div>
 
+
+
+
+<!-- chart js -->
+<script> 
+window.onload = function () {
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "light2", // "light1", "light2", "dark1", "dark2"
+	title:{
+		text: "Yearly Posts"
+	},
+	axisY: {
+		title: "Posts"
+	},
+	data: [{        
+		type: "column",  
+		showInLegend: true, 
+		legendMarkerColor: "grey",
+		legendText: "{% now 'Y' %}",
+        color: "rgba(100,149,237,.8)", 
+        indexLabel: " {y}",
+		dataPoints: [ 
+        { y: Number("{{post_graph|get_dict:1}}"), label: 'Jan' },
+        { y: Number("{{post_graph|get_dict:2}}"), label: 'Feb' },
+        { y: Number("{{post_graph|get_dict:3}}"), label: 'Mar' },
+        { y: Number("{{post_graph|get_dict:4}}"), label: 'Apr' },
+        { y: Number("{{post_graph|get_dict:5}}"), label: 'May' },
+        { y: Number("{{post_graph|get_dict:6}}"), label: 'Jun' },
+        { y: Number("{{post_graph|get_dict:7}}"), label: 'Jul' },
+        { y: Number("{{post_graph|get_dict:8}}"), label: 'Aug' },
+        { y: Number("{{post_graph|get_dict:9}}"), label: 'Sep' },
+        { y: Number("{{post_graph|get_dict:10}}"), label: 'Oct' }, 
+        { y: Number("{{post_graph|get_dict:11}}"), label: 'Nov' },
+        { y: Number("{{post_graph|get_dict:12}}"), label: 'Dec' }    
+		]
+	}]
+});
+chart.render();
+}
+    </script>
 {% endblock contents %}

@@ -1,0 +1,45 @@
+{% extends 'dev_admin/adminhome.html' %}
+{% load static %}
+{% block contents %}
+<div class="row mx-2 shadow rounded bg-white py-2">
+    <table id="tableid1" class="table table-striped" >
+        <thead class="bg-dark text-white">
+            <tr>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th class="text-center">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for blogger in bloggers %}
+            <tr>
+                <td>
+                    <a href="{% url 'admin_blogger_profile' blogger.pk %}" class="text-decoration-none">
+                        <img
+                            src="{% if blogger.profile.image %}{{blogger.profile.image.url}} {% else %}{% static 'images/user.png' %}{% endif %}"
+                            class="rounded-circle"
+                            height="30"
+                            width="30"
+                            loading="lazy"
+                        />
+                    </a>
+                    <a href="{% url 'admin_blogger_profile' blogger.pk %}" class="px-2 text-decoration-none text-black fw-bold">
+                        {{blogger.username}}
+                    </a>
+                </td>
+                <td>{{ blogger.first_name | title}}</td>
+                <td>{{ blogger.last_name | title}}</td>
+                <td class="text-center">
+                    {% if  blogger.is_active %}
+                        <div class="bg-success bg-opacity-25 text-success p-1 rounded btn disabled">Active</div>
+                    {% else %}
+                        <div class="bg-danger bg-opacity-25 text-danger p-1 rounded btn disabled">Blocked</div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock contents %}

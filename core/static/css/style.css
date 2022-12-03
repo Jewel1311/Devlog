@@ -76,3 +76,7 @@ body {
 .setblue{
   color: #0275d8 !important;
 }
+.unclickable{
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
