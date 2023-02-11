@@ -204,7 +204,7 @@
                     <div>{{post.user.profile.education}}</div>
                 {% endif %}
                 <div class="text-secondary mt-2">Joined on</div>
-                <div>{{post.user.date_joined}}</div>
+                <div>{{post.user.date_joined | date}}</div>
             </div>
         </div>
     {% endif %}

@@ -186,9 +186,10 @@ def write_post(request):
             post.save()
 
             #saving no of posts in user profile
-            profile = Profile.objects.get(user=request.user)
-            profile.post_count +=1 
-            profile.save()
+            if 'draft' not in request.POST:
+                profile = Profile.objects.get(user=request.user)
+                profile.post_count +=1 
+                profile.save()
 
             return redirect('home')
     
@@ -222,12 +223,15 @@ def edit_post(request, pk):
 
     if request.method == "POST":
         form = PostEditForm(request.POST, request.FILES, instance=post)
+        profile = Profile.objects.get(user=request.user)
+
         tags = request.POST['hashtags']
         if form.is_valid():
             draft = False
             if 'draft' in request.POST:
                 post.draft = True
                 draft = True
+                profile.post_count -= 1
             else:
                 post.draft = False
             post.save()
@@ -236,6 +240,12 @@ def edit_post(request, pk):
             post.tags.clear()
             post.tags.add(*new_tags)
             form.save()
+
+            #saving no of posts in user profile
+            if 'draft' not in request.POST:
+                profile.post_count +=1 
+
+            profile.save()
             return redirect('home')
 
         return render(request, 'core/write.html',{'form':form})   
@@ -561,6 +571,22 @@ def delete_post(request, pk):
     profile = Profile.objects.get(user = request.user)
     profile.post_count -= 1
     profile.save()
+    return redirect('home')
+
+@login_required
+@decorators.restrict_superuser
+def delete_post(request, pk):
+    try:
+        post = Posts.objects.get(pk = pk)
+    except:
+        return HttpResponseNotFound('<h2>400 - Bad request</h2>')
+    delete_tags(post.tags.all())
+    post.tags.clear()
+    post.delete()
+    if not post.draft:
+        profile = Profile.objects.get(user = request.user)
+        profile.post_count -= 1
+        profile.save()
     return redirect('home')
 
 @login_required
