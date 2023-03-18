@@ -13,6 +13,8 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
+from .recommendation import recommendation
+
 
 
 #show recent posts, main home
@@ -86,15 +88,37 @@ def myfeed(request):
     }
     return render(request,'core/posts.html',context)
 
+
+@login_required
+@decorators.restrict_superuser
+def suggestions(request):
+    posts = []
+    values = recommendation(request.user.id)
+    for item in values:
+        post = Posts.objects.get(id = item)
+
+        # recommend posts that is not written by the current user
+        if post.user != request.user:
+            posts.append(post)
+            
+    context= {
+        'posts': posts
+    }
+
+    return render(request, "core/posts.html",context)
+
+
+
+@login_required
 @decorators.restrict_superuser
 def myposts(request,pk):
-    posts = Posts.objects.filter(user = pk ,active=True, draft = False).order_by('-id')
+    posts = Posts.objects.filter(user = pk, draft = False).order_by('-id')
     is_liked = get_is_liked(posts,request.user)
     is_saved = get_is_saved(posts,request.user)
     context ={
         'posts':posts,
         'is_liked' :is_liked,
-        'is_saved':is_saved
+        'is_saved':is_saved,
         
     }
     return render(request, 'core/posts.html',context)
@@ -674,10 +698,11 @@ def report_post(request, pk):
                 report.post = post
                 report.user = request.user
                 report.date = datetime.now()
-                if form.cleaned_data['message'] != "":
-                    report.description = form.cleaned_data['message']
+
+                post.report_count += 1
+                post.save()
                 report.save()
-                messages.success(request,'Post Reported')
+                messages.warning(request,'Post Reported')
                 return redirect('read_post', slug=post.slug)             
     else:
         form = ReportPostForm()

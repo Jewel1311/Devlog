@@ -116,7 +116,7 @@
 <div class="row">
             {% for people in peoples %}
                 <div class="col-lg-3">
-                    <div class="mx-2 my-2 shadow py-4 px-2 bg-white">
+                    <div class="mx-2 my-2 shadow py-4 px-2 bg-white rounded">
                         <a href="{% url 'view_profile' people.pk %}" class="text-decoration-none">
                             <img src="
                                 {% if people.profile.image %}
@@ -142,7 +142,7 @@
 <div class="row">
 {% for tag in tags %}
     <div class="col-lg-3">
-        <div class="mx-2 my-2 shadow py-4 px-2 bg-white">
+        <div class="mx-2 my-2 shadow py-4 px-2 bg-white rounded">
             <div><a href="{{ tag.get_absolute_url }}" class="text-decoration-none text-black fw-bold linkover">{{ tag.name }}</a></div>
             <div class="mt-3"> <span class="p-2">Posts</span><span class="  bg-primary bg-opacity-25 text-primary fw-bold px-2 rounded">{{ tag.count}}</span></div>
 

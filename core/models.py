@@ -62,6 +62,7 @@ class Posts(models.Model):
     comment_count = models.BigIntegerField(default = 0)
     slug = AutoSlugField(max_length=200,unique=True,populate_from='title',null=True)
     draft = models.BooleanField(default=False)
+    report_count = models.BigIntegerField(default=0)
 
 
     def get_absolute_url(self):
@@ -110,7 +111,6 @@ class PostReports(models.Model):
     post = models.ForeignKey(Posts, on_delete = models.CASCADE)
     category = models.CharField(max_length = 100)
     user = models.ForeignKey(User, on_delete = models.CASCADE)
-    description = models.TextField(blank = True)
     date = models.DateTimeField()
 
 
