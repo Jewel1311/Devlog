@@ -92,21 +92,29 @@ def myfeed(request):
 @login_required
 @decorators.restrict_superuser
 def suggestions(request):
+    likes = (Posts.likes  # M2M Manager
+               .through 
+               .objects  # through table manager
+               .filter(user = request.user)  # your query against through table
+               .count())
     
     posts = []
-    values = recommendation(request.user.id)
-    for item in values:
-        post = Posts.objects.get(id = item)
+    if likes > 0:
 
-        # recommend posts that is not written by the current user
-        if post.user != request.user:
-            posts.append(post)
-            
+        values = recommendation(request.user.id)
+        for item in values:
+            post = Posts.objects.get(id = item)
+
+            # recommend posts that is not written by the current user
+            if post.user != request.user and post.active:
+                posts.append(post)
+                
     context= {
         'posts': posts
     }
 
     return render(request, "core/posts.html",context)
+
 
 
 
