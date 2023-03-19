@@ -29,7 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
 ]
 
-
+SITE_ID = 2
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,7 +45,22 @@ INSTALLED_APPS = [
     'ckeditor',
     'django_cleanup.apps.CleanupConfig',
     'crispy_forms',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google'
 ]
+
+SOCIAL_ACCOUNT_PROVIDERS = {
+    "google":{
+        "SCOPE":[
+            "profile",
+            "email"
+        ],
+        "AUTH_PARAMS" : {"access_type": "online"} 
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -70,6 +85,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
             ],
             'libraries':{
             'my_templatetag': 'core.templatetags.customtags',
@@ -143,6 +159,7 @@ CKEDITOR_RESTRICT_BY_USER = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+
 STATIC_URL = 'static/'
 
 STATICFFILES_DIR=[
@@ -156,3 +173,8 @@ LOGOUT_REDIRECT_URL = 'home'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'    
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    'allauth.account.auth_backends.AuthenticationBackend',
+)

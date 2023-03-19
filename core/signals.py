@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from .models import Profile
 from django.contrib.auth.models import Group
 from django.dispatch import receiver
+from django.contrib.auth.signals import user_logged_in
+
 
 
 @receiver(post_save, sender=User)
@@ -23,4 +25,13 @@ def blogger_profile(sender, instance, created, **kwargs):
             user = instance
         )
 
-
+@receiver(user_logged_in)
+def create_profile(sender, user, request, **kwargs):
+    profile = Profile.objects.filter(user = user)
+    print(profile)
+    if profile:
+        return
+    
+    Profile.objects.create(
+            user = request.user
+        )

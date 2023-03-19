@@ -1,0 +1,13 @@
+<!-- for signin with google -->
+
+{% extends 'core/home.html' %}
+{% block contents %}
+<div class="d-flex align-items-center flex-column">
+  <h2>Sign in with Google</h2>
+  <p>Click continue</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="d-flex flex-column align-items-center btn btn-primary ">Continue</button>
+  </form>
+</div>
+{% endblock contents %}

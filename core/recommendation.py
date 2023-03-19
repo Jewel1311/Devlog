@@ -27,6 +27,7 @@ def recommendation(user_id):
     # set all unliked as 0
     user_item_matrix.fillna(0,inplace=True);
 
+
     # calculate item-item similarity matrix
     item_sim_matrix = pd.DataFrame(cosine_similarity(user_item_matrix.T), index=user_item_matrix.columns, columns=user_item_matrix.columns)
 

@@ -92,6 +92,7 @@ def myfeed(request):
 @login_required
 @decorators.restrict_superuser
 def suggestions(request):
+    
     posts = []
     values = recommendation(request.user.id)
     for item in values:
