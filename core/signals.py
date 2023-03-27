@@ -28,8 +28,8 @@ def blogger_profile(sender, instance, created, **kwargs):
 @receiver(user_logged_in)
 def create_profile(sender, user, request, **kwargs):
     profile = Profile.objects.filter(user = user)
-    print(profile)
-    if profile:
+
+    if profile or request.user.is_superuser:
         return
     
     Profile.objects.create(

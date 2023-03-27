@@ -19,6 +19,8 @@
             Tags
         </a>
         </span>
+        <!-- search form -->
+
         <form class=" d-md-flex input-group w-auto my-2 mx-2 mt-3" method="POST">
             {% csrf_token %}
             {{ form }}
@@ -28,6 +30,8 @@
                 <i class="fas fa-search"></i
             ></button></span>
         </form>
+
+
          {% if posts %}
             <div class="my-3 mx-2">
                 {% for post in posts %}
