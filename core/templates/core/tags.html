@@ -1,7 +1,7 @@
 {% extends 'core/home.html' %}
 {% load static %}
 {% block contents %}
-<div class="col-lg-9 mx-4 mb-4">
+<div class="col-lg-9 mx-md-4 mb-4">
     <div class="shadow rounded p-2 bg-white ">
         <img src="{% static 'images/hashtag.png' %}"
             class="rounded-circle"
@@ -26,7 +26,7 @@
        </div>
     </div>
 </div>
-<div class="col-lg-9 mx-4">
+<div class="col-lg-9 mx-md-4">
     {% for post in posts %}
             <div class="card my-2 shadow">
                 <div class="card-header">
@@ -59,7 +59,7 @@
                     {% endfor %}
                 </p>
                 </div>
-                <div class="card-footer d-flex justify-content-between">
+                <div class="card-footer d-flex justify-content-between ">
 
                         <span>
 
