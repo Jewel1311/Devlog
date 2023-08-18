@@ -114,7 +114,7 @@
                             />
                             <span class="fw-bold text-black px-1 textover">{{ comment.user.username }}</span>
                         </a>
-                        <div class="mt-1"> {{comment.date | date }} </div>
+                        <small class="mt-1"> {{comment.date | date }} </small>
                     </div>
                         <div class="mt-1 ">{{ comment.body }}</div>
                     
@@ -146,6 +146,7 @@
                                     />
                                     <span class="fw-bold text-black px-1 textover">{{ reply.user.username }}</span>
                                 </a>
+                                <small class="mt-1"> {{reply.date | date }} </small>
                                 <div class="mt-2">
                                     <span> {{ reply.body }}</span>
                                 </div>

@@ -3,15 +3,15 @@
 {% load static %}
 {% block body%}
 <section>
-  <a href="{% url 'home' %}" class="text-decoration-none">
-    <div class="fw-bold fs-3 m-3 text-black">DEV<span class="bg-primary text-white p-1 m-1 rounded">LOG</span></div>
-  </a>
-  <div class="container py-5 h-100">
+  <div class="container py-3 h-100">
     <div class="row justify-content-center align-items-center h-100">
       <div class="col-12 col-lg-9 col-xl-7">
         <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
-          <div class="card-body p-4 p-md-5">
-            <h3 class="mb-1 pb-2 pb-md-0 mb-md-5">Create Account</h3>
+          <div class="card-body p-3 p-md-5">
+            <a href="{% url 'home' %}" class="text-decoration-none text-center">
+              <div class="fw-bold fs-3 m-3 text-black">DEV<span class="bg-primary text-white p-1 m-1 rounded">LOG</span></div>
+            </a>
+            <h4 class="mb-1 pb-2 pb-md-0 mb-md-5">Create Account</h4>
             <form method="POST" enctype="multipart/form-data">
               {% csrf_token %}
 
@@ -88,7 +88,7 @@
             </form>
             <div class="text-center pt-1 mb-3 mt-2 pb-1 rounded">
               <a href="{% provider_login_url 'google' %}?next=/" class="text-decoration-none text-black">
-              <div class="py-2"> <img src ="{% static 'images/googlelogo.png' %}" width="35px" height="35px">
+              <div class="py-2"> <img src ="{% static 'images/googlelogo.png' %}" width="30px" height="30px">
                Sign up using Google
               </div>
             </a>
